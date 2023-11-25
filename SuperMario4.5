@@ -11,21 +11,27 @@ def onAppStart(app):
     app.mariox, app.marioy = 100, 250
     app.marioState = 'idle'
     app.bigMarioWalkRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkRight.png')
+    app.bigMarioWalkLeft = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkLeft.png')
     app.bigMarioIdleRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioIdleRight.png')
+    app.bigMarioCrouchRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioCrouchRight.png')
     app.bigMarioImageWidth,app.bigMarioImageHeight = app.bigMarioWalkRight.width,app.bigMarioWalkRight.height
     app.bigMarioIdleRightWidth, app.bigMarioIdleRightHeight = app.bigMarioIdleRight.width,app.bigMarioIdleRight.height
     app.bigMarioIdleRight = CMUImage(app.bigMarioIdleRight)
+    app.bigMarioCrouchRight = CMUImage(app.bigMarioCrouchRight)
     print(f'Mario Width: {app.bigMarioImageWidth}, Mario Height: {app.bigMarioImageHeight}')
 
 
-    app.sprites = [ ]
+    #MarioWalkingRight
+    app.spritesWalkingRightBig = [ ]
+    app.spritesWalkingLeftBig = [ ]
     for i in range(2):
-        # Split up the spritestrip into its separate sprites
-        # then save them in a list
-        frame = app.bigMarioWalkRight.crop((100 + 530*i, 30, 400 + 530*i, 430))
-        sprite = CMUImage(frame)
-        app.sprites.append(sprite)
-        
+        frameWalkingRightBig = app.bigMarioWalkRight.crop((100 + 530*i, 30, 400 + 530*i, 430))
+        spriteWalkingRight = CMUImage(frameWalkingRightBig)
+        app.spritesWalkingRightBig.append(spriteWalkingRight)
+    for j in range(2):
+        frameWalkingLeftBig = app.bigMarioWalkLeft.crop((100 + 480*j, 25, 400 + 480*j, 425))
+        spriteWalkingLeft = CMUImage(frameWalkingLeftBig)
+        app.spritesWalkingLeftBig.append(spriteWalkingLeft)
     # app.spriteCounter shows which sprite (of the list) 
     # we should currently display
     app.spriteCounter = 0
@@ -35,27 +41,38 @@ def onAppStart(app):
 def onStep(app):
     app.stepCounter += 1
     if app.stepCounter>= 8:
-        app.spriteCounter = (1 + app.spriteCounter) % len(app.sprites)
+        app.spriteCounter = (1 + app.spriteCounter) % len(app.spritesWalkingRightBig)
         app.stepCounter = 0 
 
 def onKeyHold(app, keys):
     isMarioMoving = False
-    if 'right' in keys:
+    if 'right' in keys and 'left' not in keys:
+        app.marioState = 'walkingRightBig'
         app.mariox += 6
         isMarioMoving = True
-    elif 'left' in keys:
+    elif 'left' in keys and 'right' not in keys:
+        app.marioState = 'walkingLeftBig'
         app.mariox -= 6
         isMarioMoving = True
-    app.marioState = 'walking' if isMarioMoving else 'idle'
+    elif 'down' in keys:
+        app.marioState = 'crouchingRightBig'
+    else:
+        app.marioState = 'idle'
 
 
 def redrawAll(app):
-    if app.marioState == 'walking':
-        sprite = app.sprites[app.spriteCounter]
+    drawLine(-100, 400, 300, 400, fill = 'blue')
+    if app.marioState == 'walkingRightBig':
+        spriteWalkingRight = app.spritesWalkingRightBig[app.spriteCounter]
         #Default mariox and y values are 100, 250
-        drawImage(sprite, app.mariox, app.marioy, align = 'center')
-    else:
-        drawImage(app.bigMarioIdleRight, app.mariox, app.marioy, align = 'center')
+        drawImage(spriteWalkingRight, app.mariox, app.marioy+5, align = 'center')
+    elif app.marioState == 'walkingLeftBig':
+        spriteWalkingLeft = app.spritesWalkingLeftBig[app.spriteCounter]
+        drawImage(spriteWalkingLeft, app.mariox, app.marioy + 10, align = 'center')
+    elif app.marioState == 'idle':
+        drawImage(app.bigMarioIdleRight, app.mariox, app.marioy + 15, align = 'center')
+    elif app.marioState == 'crouchingRightBig':
+        drawImage(app.bigMarioCrouchRight, app.mariox, app.marioy+85, align = 'center')
 
 def main():
     runApp(width=700, height=500)

@@ -8,7 +8,7 @@ def onAppStart(app):
     app.margin = 5
 
     # Open image from local directory
-    app.image = Image.open("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkRight.png")
+    app.image = Image.open("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkLeft.png")
     # If the above line displays the error
     # FileNotFoundError: [Errno 2] No such file or directory: 'images/Caaaaat.jpg'
     # it is because PIL is looking for the file
