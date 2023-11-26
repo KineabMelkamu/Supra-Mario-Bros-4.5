@@ -89,13 +89,21 @@ class Ball:
             self.isMovingInY = False
             self.color = 'red'
             self.dy = self.defaultDy
+    
+    def ballKeyPress(self, key):
+        if key == 'p':
+            self.x = 20
+            self.y = 380
+            self.isMovingInX = False
+            self.isMovingInY = False
+            self.dx = self.defaultDx
+            self.dy = self.defaultDy
 
 
 
 #---Animation functions---------------------------------
 def testCollison():
     pass
-
 
 def onAppStart(app):
     app.ball = Ball(20, 380)
@@ -105,6 +113,9 @@ def onKeyHold(app, keys):
 
 def onKeyRelease(app, key):
     app.ball.ballKeyRelease(key)
+
+def onKeyPress(app, key):
+    app.ball.ballKeyPress(key)
     
 def onStep(app):
     app.ball.step()

@@ -181,7 +181,7 @@ class Mario:
                 elif self.marioState == 'crouchingRightBig':
                     drawImage(self.bigMarioCrouchRight, self.mariox, self.marioy+82, align = 'center')
                 elif self.marioState == 'crouchingLeftBig':
-                    drawImage(self.bigMarioCrouchLeft, self.mariox, self.marioy+83, align = 'center')
+                    drawImage(self.bigMarioCrouchLeft, self.mariox, self.marioy+75, align = 'center')
             else:
                 if self.marioState == 'idleSmallLeft':
                     drawImage(self.smallMarioIdleLeft, self.mariox + 15, self.marioy + 50, align = 'center')
@@ -200,6 +200,17 @@ class Mario:
         else:
             spriteDeath = self.spriteSmallMarioDeath[self.deathCounter]
             drawImage(spriteDeath, self.mariox, self.marioy, align = 'center')
+        
+        if self.marioSize == 'small':
+            if self.marioState == 'crouchingRightSmall' or self.marioState == 'crouchingLeftSmall':
+                drawRect(self.mariox +10, self.marioy+75, 170, 150, fill = None, border = 'black', align = 'center')
+            else:
+                drawRect(self.mariox +10, self.marioy+30, 170, 235, fill = None, border = 'black', align = 'center')
+        else:
+            if self.marioState == 'crouchingRightBig' or self.marioState == 'crouchingLeftBig':
+                drawRect(self.mariox, self.marioy+75, 175, 175, fill = None, border = 'black', align = 'center')
+            else:
+                drawRect(self.mariox, self.marioy, 170, 310, fill = None, border = 'black', align = 'center')
 
 
 
