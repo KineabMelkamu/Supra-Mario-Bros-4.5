@@ -8,7 +8,7 @@ def onAppStart(app):
     app.margin = 5
 
     # Open image from local directory
-    app.image = Image.open("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkLeft.png")
+    app.image = Image.open("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\marioWalking.png")
     # If the above line displays the error
     # FileNotFoundError: [Errno 2] No such file or directory: 'images/Caaaaat.jpg'
     # it is because PIL is looking for the file
@@ -32,7 +32,7 @@ def onAppStart(app):
     # Access attributes like width and height
     app.imageWidth,app.imageHeight = app.image.width,app.image.height
     print(f'width: {app.imageWidth}, height: {app.imageHeight}')
-    app.image = app.image.crop((100, 30, 400, 430))
+    app.image = app.image.crop((30, 0, 250, 250))
 
 
     # Use 'transpose' to flip images
