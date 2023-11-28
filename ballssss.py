@@ -1,6 +1,8 @@
 from cmu_graphics import *
 import math
 
+
+
 def distance(x0, y0, x1, y1):
     return ((x0-x1)**2 + (y0-y1)**2)**0.5
 
@@ -9,13 +11,14 @@ class Ball:
         #Position
         self.x = x
         self.y = y
- 
+
 
         #Velocity
         self.isMovingInX = False
         self.isMovingInY = False
         self.gotToClimaxJump = False
         self.dx = 5
+        self.jumpingDx = 2
         self.defaultDx = 5
         self.dy = -6
         self.defaultDy = -6
@@ -26,6 +29,8 @@ class Ball:
 
         #misc 
         self.color = 'red'
+        self.isJumpingRight = False
+        self.isJumpingLeft = False
 
     def draw(self):
         drawCircle(self.x, self.y, 20, fill = self.color)
@@ -42,6 +47,7 @@ class Ball:
                 self.color = 'blue'
 
             print(f'on step for Y: x = {self.dx}, y = {self.dy}')
+        
         elif self.isMovingInX and self.isMovingInY:
             print(f'on step for elif other: x = {self.dx}, y = {self.dy}')
             self.dx += self.ddx
@@ -63,15 +69,22 @@ class Ball:
             self.isMovingInX = True
             self.x -= self.dx
             # print(self.dx)
-        elif 'up' in keys and 'right' in keys and 'left' not in keys:
+        elif 'up' in keys and 'right' in keys and 'left' not in keys and testCollison(self) == 'grounded':
+            self.isJumpingRight = True
             self.isMovingInY = not self.isMovingInY
             self.isMovingInX = not self.isMovingInX
             self.y += self.dy
-            self.x += self.dx
+            self.x += self.jumpingDx
+        elif 'up' in keys and 'left' in keys and 'right' not in keys and testCollison(self) == 'grounded':
+            self.isJumpingLeft = True
+            print('got inside el oh el')
+            self.isMovingInY = not self.isMovingInY
+            self.isMovingInX = not self.isMovingInX
+            self.y += self.dy
+            self.x -= self.jumpingDx
 
 
-
-        elif 'up' in keys:
+        elif 'up' in keys and testCollison(self) == 'grounded':
             self.isMovingInY = True
             self.y += self.dy
 
@@ -102,11 +115,18 @@ class Ball:
 
 
 #---Animation functions---------------------------------
-def testCollison():
-    pass
 
 def onAppStart(app):
     app.ball = Ball(20, 380)
+    app.rectX = 0
+    app.rectY = 400
+    app.rectHeight = 900
+    app.rectWidth = 400
+
+def testCollison(app):
+    if distance(0, 400, app.ball.x, app.ball.y) <= 20 + 900:
+        return 'grounded'
+    
 
 def onKeyHold(app, keys):
     app.ball.ballKeyHold(keys)
