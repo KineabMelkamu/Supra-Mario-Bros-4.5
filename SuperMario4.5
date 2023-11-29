@@ -212,8 +212,22 @@ class Mario:
             else:
                 drawRect(self.mariox, self.marioy, 170, 310, fill = None, border = 'black', align = 'center')
 
+class PowerUps(Mario):
+    def __init__(self, x, y, powerUp):
+        self.x, self.y, self.powerUp = x, y, powerUp
+
+        #powerUpAssets
+        self.oneUpMushroom = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\\1upMushroom.png')
+        self.fireFlower = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\\fireFlower.png')
+        self.coin = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\coin.png')
+        self.superMushroom = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\mushroom.png')
+        self.mysteryBlock = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\\1UpBlock.png')
+
+        self.oneUpMushroom = CMUImage(self.oneUpMushroom)
+        self.superMushroom = CMUImage(self.superMushroom)
 
 
+        
 ############################################################################################################
 #                                     Animaton Functions                                                   #
 ############################################################################################################

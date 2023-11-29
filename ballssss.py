@@ -25,7 +25,6 @@ class Ball:
 
         #Acceleration
         self.ddx = 0.2
-        self.ddy = 0.1
 
         #misc 
         self.color = 'red'
@@ -38,9 +37,13 @@ class Ball:
 
     def step(self):
         #Integrate position and velocity
+        if testCollison(self) != 'grounded':
+            self.y += 5
+
         if self.isMovingInX and not self.isMovingInY :
             self.dx += self.ddx
             print(f'on step for x: x = {self.dx}, y = {self.dy}')
+            
         elif self.isMovingInY and not self.isMovingInX:
             self.dy += self.ddy
             if rounded(self.dy) == 0:
@@ -54,9 +57,9 @@ class Ball:
             self.dy += self.ddy
             if rounded(self.dy) == 0:
                 self.color = 'blue'
-        else:
-            self.dx = self.defaultDx
-            self.dy = self.defaultDy
+
+        self.dx = self.defaultDx
+        self.dy = self.defaultDy
 
 
         
