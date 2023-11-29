@@ -212,6 +212,8 @@ class Mario:
             else:
                 drawRect(self.mariox, self.marioy, 170, 310, fill = None, border = 'black', align = 'center')
 
+
+
 class PowerUps(Mario):
     def __init__(self, x, y, powerUp):
         self.x, self.y, self.powerUp = x, y, powerUp
@@ -226,7 +228,55 @@ class PowerUps(Mario):
         self.oneUpMushroom = CMUImage(self.oneUpMushroom)
         self.superMushroom = CMUImage(self.superMushroom)
 
+        self.spritesFireFlower = [ ]
+        self.spritesCoin = [ ]
+        self.spritesMysteryBlock = [ ]
 
+        for i in range(2):
+            frameFireFlower = self.fireFlower.crop((10 + 210*i, 40, 220 + 210*i, 230)) 
+            spriteFireFlower = CMUImage(frameFireFlower)
+            self.spritesFireFlower.append(spriteFireFlower)
+
+        for i in range(4):
+            frameMysteryBlock = self.mysteryBlock.crop((0 + 210*i, 23, 220 + 210*i, 200))
+            spriteMysteryBlock = CMUImage(frameMysteryBlock)
+            self.spritesMysteryBlock.append(spriteMysteryBlock)
+
+            frameCoin = 
+
+        self.spriteCounter = 0
+        self.stepCounter = 0
+        self.othaCounter = 0
+        self.othaStepCounter = 0
+ 
+    def stepPowerUp(self):
+        self.stepCounter += 1
+        self.othaStepCounter += 1
+
+        if self.stepCounter >= 8:
+            self.spriteCounter = (1 + self.spriteCounter) % len(self.spritesFireFlower)
+            self.stepCounter = 0
+
+        if self.othaStepCounter >=4:
+            self.othaCounter = (1 + self.othaCounter) % len(self.spritesMysteryBlock)
+            self.othaStepCounter = 0
+
+
+    def drawPowerUp(self):
+        if self.powerUp == 'fireFlower':
+            spriteFrameFire = self.spritesFireFlower[self.spriteCounter]
+            drawImage(spriteFrame, self.x, self.y, align = 'center')
+        elif self.powerUp == 'mysteryBlock':
+            spriteFrameMystery = self.spritesMysteryBlock[self.othaCounter]
+            drawImage(spriteFrameMystery, self.x, self.y, align = 'center')
+        elif self.powerUp == 'superMushroom':
+            drawImage(self.superMushroom, self.x, self.y, align = 'center')
+        elif self.powerUp == 'oneUpMushroom':
+            drawImage(self.oneUpMushroom, self.x, self.y, align = 'center')
+
+
+
+        
         
 ############################################################################################################
 #                                     Animaton Functions                                                   #
@@ -235,11 +285,13 @@ class PowerUps(Mario):
 
 def onAppStart(app):
     app.Mario = Mario(100, 250, 'idleSmallRight', 'small')
+    app.fireFlower1 = PowerUps(490, 300, 'mysteryBlock')
     app.stepsPerSecond = 30
 
 
 def onStep(app):
     app.Mario.stepMario()
+    app.fireFlower1.stepPowerUp()
 
 def onKeyHold(app, keys):
     app.Mario.marioKeyHold(keys)
@@ -254,6 +306,7 @@ def onKeyPress(app, key):
 def redrawAll(app):
     drawLine(-100, 400, 9999, 400, fill = 'blue')
     app.Mario.drawMario()
+    app.fireFlower1.drawPowerUp()
 
 def main():
     runApp(width=700, height=500)
