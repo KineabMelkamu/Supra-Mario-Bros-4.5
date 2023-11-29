@@ -242,7 +242,9 @@ class PowerUps(Mario):
             spriteMysteryBlock = CMUImage(frameMysteryBlock)
             self.spritesMysteryBlock.append(spriteMysteryBlock)
 
-            frameCoin = 
+            frameCoin = self.coin.crop((0 + 300*i, 0, 150 + 300 * i, 200))
+            spriteFrameCoin = CMUImage(frameCoin)
+            self.spritesCoin.append(spriteFrameCoin)
 
         self.spriteCounter = 0
         self.stepCounter = 0
@@ -269,10 +271,14 @@ class PowerUps(Mario):
         elif self.powerUp == 'mysteryBlock':
             spriteFrameMystery = self.spritesMysteryBlock[self.othaCounter]
             drawImage(spriteFrameMystery, self.x, self.y, align = 'center')
+        elif self.powerUp == 'coin':
+            spriteCoin = self.spritesCoin[self.othaCounter]
+            drawImage(spriteCoin, self.x, self.y, align = 'center')
         elif self.powerUp == 'superMushroom':
             drawImage(self.superMushroom, self.x, self.y, align = 'center')
         elif self.powerUp == 'oneUpMushroom':
             drawImage(self.oneUpMushroom, self.x, self.y, align = 'center')
+        
 
 
 
@@ -285,7 +291,7 @@ class PowerUps(Mario):
 
 def onAppStart(app):
     app.Mario = Mario(100, 250, 'idleSmallRight', 'small')
-    app.fireFlower1 = PowerUps(490, 300, 'mysteryBlock')
+    app.fireFlower1 = PowerUps(490, 300, 'coin')
     app.stepsPerSecond = 30
 
 
