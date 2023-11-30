@@ -18,6 +18,9 @@ class Mario:
 
         #Initializing mario vals
         self.mariox, self.marioy, self.marioState, self.marioSize = x, y, marioState, marioSize
+        self.isMovingRight = False
+        self.isScrollingRight = False
+
 
         #Lives and death value
         
@@ -38,20 +41,57 @@ class Mario:
         self.smallMarioCrouchRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\marioCrouchRight.png')
         self.smallMarioCrouchLeft = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\marioCrouchLeft.png')
 
+        self.bigMarioIdleRightHeight, self.bigMarioIdleRightWidth = self.bigMarioIdleRight.size
+        self.bigMarioIdleLeftHeight, self.bigMarioIdleLeftWidth = self.bigMarioIdleLeft.size
+        self.bigMarioCrouchRightHeight, self.bigMarioCrouchRightWidth = self.bigMarioCrouchRight.size
+        self.bigMarioCrouchLeftHeight, self.bigMarioCrouchLeftWidth = self.bigMarioCrouchLeft.size
+        self.smallMarioIdleRightHeight, self.smallMarioIdleRightWidth = self.smallMarioIdleRight.size
+        self.smallMarioIdleLeftHeight, self.smallMarioIdleLeftWidth = self.smallMarioIdleLeft.size
+        self.smallMarioCrouchRightHeight, self.smallMarioCrouchRightWidth = self.smallMarioCrouchRight.size
+        self.smallMarioCrouchLeftHeight, self.smallMarioCrouchLeftWidth = self.smallMarioCrouchLeft.size
 
 
-        self.bigMarioImageWidth,self.bigMarioImageHeight = self.bigMarioWalkRight.width,self.bigMarioWalkRight.height
-        self.bigMarioIdleRightWidth, self.bigMarioIdleRightHeight = self.bigMarioIdleRight.width,self.bigMarioIdleRight.height
-
+        bigMarioIdleRightWidth, bigMarioIdleRightHeight = self.bigMarioIdleRight.size
+        self.bigMarioIdleRight = self.bigMarioIdleRight.resize((bigMarioIdleRightWidth//4, bigMarioIdleRightHeight//4))
         self.bigMarioIdleRight = CMUImage(self.bigMarioIdleRight)
+
+        bigMarioIdleLeftWidth, bigMarioIdleLeftHeight = self.bigMarioIdleLeft.size
+        self.bigMarioIdleLeft = self.bigMarioIdleLeft.resize((bigMarioIdleLeftWidth//4, bigMarioIdleLeftHeight//4))
         self.bigMarioIdleLeft = CMUImage(self.bigMarioIdleLeft)
+
+        bigMarioCrouchRightWidth, bigMarioCrouchRightHeight = self.bigMarioCrouchRight.size
+        self.bigMarioCrouchRight = self.bigMarioCrouchRight.resize((bigMarioCrouchRightWidth//4, bigMarioCrouchRightHeight//4))
         self.bigMarioCrouchRight = CMUImage(self.bigMarioCrouchRight)
+
+        bigMarioCrouchLeftWidth, bigMarioCrouchLeftHeight = self.bigMarioCrouchLeft.size
+        self.bigMarioCrouchLeft = self.bigMarioCrouchLeft.resize((bigMarioCrouchLeftWidth//4, bigMarioCrouchLeftHeight//4))
         self.bigMarioCrouchLeft = CMUImage(self.bigMarioCrouchLeft)
 
-        self.smallMarioIdleRight = CMUImage(self.smallMarioIdleRight)
+        smallMarioIdleLeftWidth, smallMarioIdleLeftHeight = self.smallMarioIdleLeft.size
+        self.smallMarioIdleLeft = self.smallMarioIdleLeft.resize((smallMarioIdleLeftWidth//4, smallMarioIdleLeftHeight//4))
         self.smallMarioIdleLeft = CMUImage(self.smallMarioIdleLeft)
-        self.smallMarioCrouchRight = CMUImage(self.smallMarioCrouchRight)
+
+        smallMarioIdleRightWidth, smallMarioIdleRightHeight = self.smallMarioIdleRight.size
+        self.smallMarioIdleRight = self.smallMarioIdleRight.resize((smallMarioIdleRightWidth//4, smallMarioIdleRightHeight//4))
+        self.smallMarioIdleRight = CMUImage(self.smallMarioIdleRight)
+
+        smallMarioCrouchRightWidth, smallMarioCrouchRightHeight = self.smallMarioCrouchRight.size
+        self.smallMarioCrouchRight = self.smallMarioCrouchRight.resize((smallMarioCrouchRightWidth//4, smallMarioCrouchRightHeight//4))
+        self.smallMarioCrouchRight = CMUImage(self.smallMarioCrouchRight)       
+
+        smallMarioCrouchLeftWidth, smallMarioCrouchLeftHeight = self.smallMarioCrouchLeft.size
+        self.smallMarioCrouchLeft = self.smallMarioCrouchLeft.resize((smallMarioCrouchLeftWidth//4, smallMarioCrouchLeftHeight//4))
         self.smallMarioCrouchLeft = CMUImage(self.smallMarioCrouchLeft)
+
+        # self.bigMarioIdleRight = CMUImage(self.bigMarioIdleRight)
+        # self.bigMarioIdleLeft = CMUImage(self.bigMarioIdleLeft)
+        # self.bigMarioCrouchRight = CMUImage(self.bigMarioCrouchRight)
+        # self.bigMarioCrouchLeft = CMUImage(self.bigMarioCrouchLeft)
+
+        # self.smallMarioIdleRight = CMUImage(self.smallMarioIdleRight)
+        # self.smallMarioIdleLeft = CMUImage(self.smallMarioIdleLeft)
+        # self.smallMarioCrouchRight = CMUImage(self.smallMarioCrouchRight)
+        # self.smallMarioCrouchLeft = CMUImage(self.smallMarioCrouchLeft)
 
 
 
@@ -68,18 +108,26 @@ class Mario:
 
         for i in range(2):
             frameWalkingRightBig = self.bigMarioWalkRight.crop((100 + 530*i, 30, 400 + 530*i, 430))
+            frameWalkingRightBigWidth, frameWalkingRightBigHeight = frameWalkingRightBig.size
+            frameWalkingRightBig = frameWalkingRightBig.resize((frameWalkingRightBigWidth//4, frameWalkingRightBigHeight//4))
             spriteWalkingRight = CMUImage(frameWalkingRightBig)
             self.spritesWalkingRightBig.append(spriteWalkingRight)
 
             frameWalkingLeftBig = self.bigMarioWalkLeft.crop((100 + 480*i, 25, 400 + 480*i, 425))
+            frameWalkingLeftBigWidth, frameWalkingLeftBigHeight = frameWalkingLeftBig.size
+            frameWalkingLeftBig = frameWalkingLeftBig.resize((frameWalkingLeftBigWidth//4, frameWalkingLeftBigHeight//4))
             spriteWalkingLeft = CMUImage(frameWalkingLeftBig)
             self.spritesWalkingLeftBig.append(spriteWalkingLeft)
 
             frameWalkingRightSmall = self.smallMarioWalkRight.crop(((20 + 290 * i, 0, 250 + 290 * i, 250)))
+            frameWalkingRightSmallWidth, frameWalkingRightSmallHeight = frameWalkingRightSmall.size
+            frameWalkingRightSmall = frameWalkingRightSmall.resize((frameWalkingRightSmallWidth//4, frameWalkingRightSmallHeight//4))
             spriteWalkingRightSmall = CMUImage(frameWalkingRightSmall)
             self.spritesWalkingRightSmall.append(spriteWalkingRightSmall)
 
             frameWalkingLeftSmall = self.smallMarioWalkLeft.crop(((20 + 250 * i, 0, 250 + 290 * i, 230)))
+            frameWalkingLeftSmallWidth, frameWalkingLeftSmallHeight = frameWalkingLeftSmall.size
+            frameWalkingLeftSmall = frameWalkingLeftSmall.resize((frameWalkingLeftSmallWidth//4, frameWalkingLeftSmallHeight//4))
             spriteWalkingLeftSmall = CMUImage(frameWalkingLeftSmall)
             self.spritesWalkingLeftSmall.append(spriteWalkingLeftSmall)
 
@@ -97,6 +145,8 @@ class Mario:
         self.stepDeathCounter = 0
     
     def stepMario(self):
+        if self.isScrollingRight:
+            print('I AM SHARTING')
         self.stepCounter += 1
         self.stepDeathCounter += 1
         if self.stepCounter>= 8:
@@ -121,9 +171,14 @@ class Mario:
         tempValue = self.marioState
         if self.marioSize == 'big':
             if 'right' in keys and 'left' not in keys:
-                self.marioState = 'walkingRightBig'
-                self.mariox += 6
+                self.isMovingRight = True
+                if self.isScrollingRight == True:
+                    self.marioState = 'walkingRightBig'
+                else:
+                    self.marioState = 'walkingRightBig'
+                    self.mariox += 6
             elif 'left' in keys and 'right' not in keys:
+                self.isScrollingRight = False
                 self.marioState = 'walkingLeftBig'
                 self.mariox -= 6
             elif 'down' in keys and tempValue == 'idle':
@@ -145,23 +200,32 @@ class Mario:
     def marioKeyRelease(self, key):
         if self.marioSize == 'big':
             if (key == 'right'):
+                self.isMovingRight = False
+                self.isScrollingRight = False
                 self.marioState = 'idle'
             elif key == 'left':
+                self.isScrollingRight = False
                 self.marioState = 'idleBigLeft'
             elif key == 'down' and self.marioState == 'crouchingRightBig':
+                self.isScrollingRight = False
                 self.marioState = 'idle'
             elif key == 'down' and self.marioState == 'crouchingLeftBig':
+                self.isScrollingRight = False
                 self.marioState = 'idleBigLeft'
         elif self.marioSize == 'small':
             if (key == 'right'):
+                self.isScrollingRight = False
                 print('got in the thing')
                 self.marioState = 'idleSmallRight'
             elif key == 'left':
+                self.isScrollingRight = False
                 self.marioState = 'idleSmallLeft'
             elif key == 'down' and self.marioState == 'crouchingRightSmall':
+                self.isScrollingRight = False
                 print('got in da ting 1')
                 self.marioState = 'idleSmallRight'
             elif key == 'down' and self.marioState == 'crouchingLeftSmall':
+                self.isScrollingRight = False
                 print('got in da ting 2')
                 self.marioState = 'idleSmallLeft'
 
@@ -170,33 +234,33 @@ class Mario:
             if self.marioSize == 'big':
                 if self.marioState == 'walkingRightBig':
                     spriteWalkingRight = self.spritesWalkingRightBig[self.spriteCounter]
-                    drawImage(spriteWalkingRight, self.mariox, self.marioy+5, align = 'center')
+                    drawImage(spriteWalkingRight, self.mariox, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'walkingLeftBig':
                     spriteWalkingLeft = self.spritesWalkingLeftBig[self.spriteCounter]
-                    drawImage(spriteWalkingLeft, self.mariox, self.marioy + 10, align = 'center')
+                    drawImage(spriteWalkingLeft, self.mariox, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'idle':
-                    drawImage(self.bigMarioIdleRight, self.mariox + 15, self.marioy + 15, align = 'center')
+                    drawImage(self.bigMarioIdleRight, self.mariox + 15, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'idleBigLeft':
-                    drawImage(self.bigMarioIdleLeft, self.mariox, self.marioy, align = 'center')
+                    drawImage(self.bigMarioIdleLeft, self.mariox, self.marioy + 125, align = 'center')
                 elif self.marioState == 'crouchingRightBig':
-                    drawImage(self.bigMarioCrouchRight, self.mariox, self.marioy+82, align = 'center')
+                    drawImage(self.bigMarioCrouchRight, self.mariox, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'crouchingLeftBig':
-                    drawImage(self.bigMarioCrouchLeft, self.mariox, self.marioy+75, align = 'center')
+                    drawImage(self.bigMarioCrouchLeft, self.mariox, self.marioy+ 125, align = 'center')
             else:
                 if self.marioState == 'idleSmallLeft':
-                    drawImage(self.smallMarioIdleLeft, self.mariox + 15, self.marioy + 50, align = 'center')
+                    drawImage(self.smallMarioIdleLeft, self.mariox + 15, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'idleSmallRight':
-                    drawImage(self.smallMarioIdleRight, self.mariox + 15, self.marioy + 50, align = 'center')
+                    drawImage(self.smallMarioIdleRight, self.mariox + 15, self.marioy + 125, align = 'center')
                 elif self.marioState == 'walkingRightSmall':
                     spriteWalkingRightSmall = self.spritesWalkingRightSmall[self.spriteCounter]
-                    drawImage(spriteWalkingRightSmall, self.mariox, self.marioy+55, align = 'center')
+                    drawImage(spriteWalkingRightSmall, self.mariox, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'walkingLeftSmall':
                     spriteWalkingLeftSmall = self.spritesWalkingLeftSmall[self.spriteCounter]
-                    drawImage(spriteWalkingLeftSmall, self.mariox, self.marioy + 55, align = 'center')
+                    drawImage(spriteWalkingLeftSmall, self.mariox, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'crouchingRightSmall':
-                    drawImage(self.smallMarioCrouchRight, self.mariox, self.marioy + 73, align = 'center')
+                    drawImage(self.smallMarioCrouchRight, self.mariox, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'crouchingLeftSmall':
-                    drawImage(self.smallMarioCrouchLeft, self.mariox, self.marioy + 73, align = 'center')
+                    drawImage(self.smallMarioCrouchLeft, self.mariox, self.marioy+ 125, align = 'center')
         else:
             spriteDeath = self.spriteSmallMarioDeath[self.deathCounter]
             drawImage(spriteDeath, self.mariox, self.marioy, align = 'center')
@@ -224,8 +288,23 @@ class PowerUps(Mario):
         self.superMushroom = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\mushroom.png')
         self.mysteryBlock = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\\1UpBlock.png')
 
+
+        # bigMarioIdleRightWidth, bigMarioIdleRightHeight = self.bigMarioIdleRight.size
+        # self.bigMarioIdleRight = self.bigMarioIdleRight.resize((bigMarioIdleRightWidth//4, bigMarioIdleRightHeight//4))
+        # self.bigMarioIdleRight = CMUImage(self.bigMarioIdleRight)
+
+
+        oneUpMushroomWidth, oneUpMushroomHeight = self.oneUpMushroom.size
+        self.oneUpMushroom = self.oneUpMushroom.resize((oneUpMushroomWidth//5, oneUpMushroomHeight//5))
         self.oneUpMushroom = CMUImage(self.oneUpMushroom)
+
+        superMushroomWidth, superMushroomHeight = self.superMushroom.size
+        self.superMushroom = self.superMushroom.resize((superMushroomWidth//5, superMushroomHeight//5))
         self.superMushroom = CMUImage(self.superMushroom)
+
+
+        # self.oneUpMushroom = CMUImage(self.oneUpMushroom)
+        # self.superMushroom = CMUImage(self.superMushroom)
 
         self.spritesFireFlower = [ ]
         self.spritesCoin = [ ]
@@ -233,15 +312,21 @@ class PowerUps(Mario):
 
         for i in range(2):
             frameFireFlower = self.fireFlower.crop((10 + 210*i, 40, 220 + 210*i, 230)) 
+            frameFireFlowerWidth, frameFireFlowerHeight = frameFireFlower.size
+            frameFireFlower = frameFireFlower.resize((frameFireFlowerWidth//5, frameFireFlowerHeight//5))
             spriteFireFlower = CMUImage(frameFireFlower)
             self.spritesFireFlower.append(spriteFireFlower)
 
         for i in range(3):
             frameMysteryBlock = self.mysteryBlock.crop((0 + 210*i, 23, 220 + 210*i, 200))
+            frameMysteryBlockWidth, frameMysteryBlockHeight = frameMysteryBlock.size
+            frameMysteryBlock = frameMysteryBlock.resize((frameMysteryBlockWidth//5, frameMysteryBlockHeight//5))
             spriteMysteryBlock = CMUImage(frameMysteryBlock)
             self.spritesMysteryBlock.append(spriteMysteryBlock)
 
             frameCoin = self.coin.crop((13 + 350*i, 0, 150 + 350 * i, 200))
+            frameCoinWidth, frameCoinHeight = frameCoin.size
+            frameCoin = frameCoin.resize((frameCoinWidth//5, frameCoinHeight//5))
             spriteFrameCoin = CMUImage(frameCoin)
             self.spritesCoin.append(spriteFrameCoin)
 
@@ -266,7 +351,7 @@ class PowerUps(Mario):
     def drawPowerUp(self):
         if self.powerUp == 'fireFlower':
             spriteFrameFire = self.spritesFireFlower[self.spriteCounter]
-            drawImage(spriteFrame, self.x, self.y, align = 'center')
+            drawImage(spriteFrameFire, self.x, self.y, align = 'center')
         elif self.powerUp == 'mysteryBlock':
             spriteFrameMystery = self.spritesMysteryBlock[self.othaCounter]
             drawImage(spriteFrameMystery, self.x, self.y, align = 'center')
@@ -289,14 +374,20 @@ class PowerUps(Mario):
 
 def onAppStart(app):
     app.Mario = Mario(100, 250, 'idleSmallRight', 'small')
-    app.fireFlower1 = PowerUps(490, 300, 'coin')
+    app.fireFlower1 = PowerUps(490, 300, 'mysteryBlock')
     app.stepsPerSecond = 30
-    app.yoshisIsland = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\Yoshi's Island.png")
-    app.yoshisIsland = CMUImage(app.yoshisIsland)
-
+    app.line1x = -100
+    app.line2x = 900
 
 def onStep(app):
     app.Mario.stepMario()
+    if app.Mario.mariox > app.width//2:
+        app.Mario.isScrollingRight = True
+        if app.Mario.isMovingRight == True:
+            app.fireFlower1.x -=5
+            app.line1x -= 5
+            app.line2x -= 5
+
     app.fireFlower1.stepPowerUp()
 
 def onKeyHold(app, keys):
@@ -310,8 +401,8 @@ def onKeyPress(app, key):
     
 
 def redrawAll(app):
-    drawLine(-100, 400, 9999, 400, fill = 'blue')
-    drawImage(app.yoshisIsland, app.width//2, app.height//2, align = 'center')
+    drawLine(app.line1x, 400, 9999, 400, fill = 'blue')
+    drawLine(app.line2x, 400, 9999, 400, fill = 'red')
     app.Mario.drawMario()
     app.fireFlower1.drawPowerUp()
 
