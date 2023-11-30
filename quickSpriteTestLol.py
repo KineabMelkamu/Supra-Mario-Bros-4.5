@@ -24,10 +24,14 @@ class Mario:
 
         #MarioHitBoxes
         self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight = self.mariox + 12, self.marioy+123, 45, 60   
-        self.mainHitCrouchx, self.mainHitCrouchy, self.mainHitCrouchWidth, self.mainHitCrouchHeight = self.mariox + 12, self.marioy+126, 45, 45   
+        self.mainHitCrouchx, self.mainHitCrouchy, self.mainHitCrouchWidth, self.mainHitCrouchHeight = self.mariox + 12, self.marioy+126, 45, 45
+        self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight = self.mariox + 12, self.marioy+123, 45, 15
+        self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight = self.mariox + 12, self.marioy+146, 45, 15     
 
-        self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight = self.mariox+14, self.marioy+110, 50, 80  
+        self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight = self.mariox + 12, self.marioy+100, 50, 80  
         self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight = self.mariox, self.marioy, 50, 50 
+        self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig = self.mariox + 14, self.marioy+75, 50, 15
+        self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig = self.mariox + 14, self.marioy+146, 50, 15  
 
         #Mario Assets
         self.bigMarioWalkRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkRight.png')
@@ -150,6 +154,15 @@ class Mario:
 
         self.mainHitBigx, self.mainHitBigy = self.mariox+14, self.marioy+110  
         self.mainHitBigCrouchx, self.mainHitBigCrouchy = self.mariox, self.marioy+125
+        self.topHitx, self.topHity = self.mariox + 12, self.marioy+100
+        self.bottomHitx, self.bottomHity= self.mariox + 12, self.marioy+146
+
+        # self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig = self.mariox + 12, self.marioy+123, 50, 15
+        # self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig = self.mariox + 12, self.marioy+146, 50, 15
+        self.topHitBigx, self.topHitBigy = self.mariox + 14, self.marioy+75 
+        self.bottomHitBigx, self.bottomHitBigy = self.mariox + 14, self.marioy+146
+     
+
 
 
 
@@ -271,13 +284,21 @@ class Mario:
                 #self.mainHitCrouchx, self.mainHitCrouchy, self.mainHitCrouchWidth, self.mainHitCrouchHeight = self.mariox + 12, self.marioy+123, 4, 45     
                 drawRect(self.mainHitCrouchx, self.mainHitCrouchy, self.mainHitCrouchWidth, self.mainHitCrouchHeight, fill = None, border = 'black', align = 'center')
             else:
+                #self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight = self.mariox + 12, self.marioy+123, 45, 30  
+                #self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight = self.mariox + 12, self.marioy+123, 45, 15     
                 drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
+                drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
+                drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
         else:
             if self.marioState == 'crouchingRightBig' or self.marioState == 'crouchingLeftBig':
                 drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = 'black', align = 'center')
             else:
                 #self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight = self.mariox, self.marioy, 70, 90   
                 drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
+                # self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig = self.mariox + 12, self.marioy+123, 50, 15
+                # self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig = self.mariox + 12, self.marioy+146, 50, 15
+                drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
+                drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
 
 
 class PowerUps(Mario):
@@ -377,6 +398,8 @@ class PowerUps(Mario):
 def onAppStart(app):
     app.Mario = Mario(100, 250, 'idleSmallRight', 'small')
     app.fireFlower1 = PowerUps(490, 300, 'fireFlower')
+    app.map1 = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Yoshi's Island.png")
+    app.map1 = CMUImage(app.map1)
     app.stepsPerSecond = 30
     app.line1x = -100
     app.line2x = 900
@@ -403,6 +426,7 @@ def onKeyPress(app, key):
     
 
 def redrawAll(app):
+    drawImage(app.map1, app.Mario.mariox, app.Mario.marioy, align = 'center')
     drawLine(app.line1x, 400, 9999, 400, fill = 'blue')
     drawLine(app.line2x, 400, 9999, 400, fill = 'red')
     app.Mario.drawMario()
