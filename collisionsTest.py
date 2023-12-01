@@ -46,7 +46,7 @@ def onAppStart(app):
     app.isJumpingRight = False
     app.isJumpingLeft = False
     app.isMovingAtAll = False
-    app.rectColor = 'red'
+    app.rectColor = 'blue'
 
 
 def onKeyHold(app, keys, modifiers):
@@ -67,7 +67,7 @@ def onKeyHold(app, keys, modifiers):
         app.isJumpingUp = True
         app.dy = -4
         app.ddy = 0.12
-        app.rectColor = 'red'
+        app.rectColor = 'blue'
     # elif 'up' in keys and 'right' in keys and testCollision(app) == 'grouned':
     elif 'up' in keys and 'right' in keys and 'left' not in keys and testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
         app.isMovingAtAll = True
@@ -78,7 +78,7 @@ def onKeyHold(app, keys, modifiers):
         app.dy = -4
         app.ddy = 0.12
         app.jumpingdx = 4
-        app.rectColor = 'red'
+        app.rectColor = 'blue'
     
     elif 'up' in keys and 'left' in keys and 'right' not in keys and testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
         print('in third case')
@@ -87,7 +87,7 @@ def onKeyHold(app, keys, modifiers):
         app.dy = -8
         app.ddy = 0.12
         app.jumpingdx = 4
-        app.rectColor = 'red'
+        app.rectColor = 'blue'
 
     elif 'down' in keys:
         app.rectTop1 += 1
@@ -106,7 +106,7 @@ def onStep(app):
     if testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) != 'grouned':
         app.rectColor = 'green'
     elif testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
-        app.rectColor = 'red'
+        app.rectColor = 'blue'
     if app.isJumpingUp == True:
         app.rectTop1 += app.dy
         app.dy += app.ddy

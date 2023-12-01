@@ -255,6 +255,10 @@ class Mario:
                 self.isScrollingRight = False
                 self.marioState = 'walkingLeftBig'
                 self.mariox -= 6
+            elif 'left' in keys and 'right' not in keys and 'control' in modifiers:
+                self.isRunning = True
+                self.marioState = 'walkingLeftBig'
+                self.mariox -= 15
             elif 'down' in keys and tempValue == 'idle':
                 self.marioState = 'crouchingRightBig'
             elif 'down' in keys and tempValue == 'idleBigLeft':
@@ -275,9 +279,21 @@ class Mario:
                 else:
                     self.marioState = 'walkingRightSmall'
                     self.mariox += 6
+            elif 'right' in keys and 'left' not in keys and 'control' in modifiers:
+                self.isRunning = True
+                self.isMovingRight = True
+                if self.isScrollingRight == True:
+                    self.marioState = 'walkingRightSmall'
+                else:
+                    self.marioState = 'walkingRightSmall'
+                    self.mariox += 15
             elif 'left' in keys and 'right' not in keys and 'control' not in modifiers:
                 self.marioState = 'walkingLeftSmall'
                 self.mariox -= 6
+            elif 'left' in keys and 'right' not in keys and 'control' in modifiers:
+                self.isRunning = True
+                self.marioState = 'walkingLeftSmall'
+                self.mariox -= 15
             elif 'down' in keys and tempValue == 'idleSmallRight':
                 self.marioState = 'crouchingRightSmall'
             elif 'down' in keys and tempValue == 'idleSmallLeft':
@@ -583,8 +599,8 @@ def onAppStart(app):
 
     #enemies
     app.enemies = []
-    app.gloomba1 = enemies(500, 420, 'gloombaNotDead', 'gloomba')
-    app.enemies.append(app.gloomba1)
+    # app.gloomba1 = enemies(500, 420, 'gloombaNotDead', 'gloomba')
+    # app.enemies.append(app.gloomba1)
 
 def onStep(app):
     testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, app.ground1.x, app.ground1.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, app.ground1.width, app.ground1.height)
