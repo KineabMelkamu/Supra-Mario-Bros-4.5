@@ -39,8 +39,8 @@ def onAppStart(app):
     app.rectTop2 = 300
     app.width2, app.height2 = 300, 300
 
-    app.dy = -4
-    app.ddy = 0.12
+    app.dy = -6
+    app.ddy = 0.3
     app.jumpingdx = 4
     app.isJumpingUp = False
     app.isJumpingRight = False
@@ -65,39 +65,34 @@ def onKeyHold(app, keys, modifiers):
         print('in first testCase')
         # app.rectTop1 -= 1
         app.isJumpingUp = True
-        app.dy = -4
-        app.ddy = 0.12
-        app.rectColor = 'blue'
+        app.dy = -6
+        app.ddy = 0.3
+        app.rectColor = 'green'
     # elif 'up' in keys and 'right' in keys and testCollision(app) == 'grouned':
-    elif 'up' in keys and 'right' in keys and 'left' not in keys and testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
-        app.isMovingAtAll = True
-        app.isJumpingRight = True
-        print('in second testCase')
-        # app.rectLeft1 += 8
-        app.isJumpingRight = True
-        app.dy = -4
-        app.ddy = 0.12
-        app.jumpingdx = 4
-        app.rectColor = 'blue'
+    # elif 'up' in keys and 'right' in keys and 'left' not in keys and testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
+    #     app.isMovingAtAll = True
+    #     app.isJumpingRight = True
+    #     print('in second testCase')
+    #     # app.rectLeft1 += 8
+    #     app.isJumpingRight = True
+    #     app.dy = -4
+    #     app.ddy = 0.12
+    #     app.jumpingdx = 4
+    #     app.rectColor = 'blue'
     
-    elif 'up' in keys and 'left' in keys and 'right' not in keys and testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
-        print('in third case')
-        app.isMovingAtAll = True
-        app.isJumpingLeft = True
-        app.dy = -8
-        app.ddy = 0.12
-        app.jumpingdx = 4
-        app.rectColor = 'blue'
+    # elif 'up' in keys and 'left' in keys and 'right' not in keys and testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
+    #     print('in third case')
+    #     app.isMovingAtAll = True
+    #     app.isJumpingLeft = True
+    #     app.dy = -8
+    #     app.ddy = 0.12
+    #     app.jumpingdx = 4
+    #     app.rectColor = 'blue'
 
     elif 'down' in keys:
         app.rectTop1 += 1
 
-def onKeyRelease(app, key):
-    # if key == 'up' and testCollision(app) == 'grouned':
-    if key == 'up' or key == 'right' or key == 'left':
-        app.isJumpingUp = False
-        app.isJumpingRight = False
-        app.isJumpingLeft = False
+
 
 
 
@@ -106,26 +101,22 @@ def onStep(app):
     if testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) != 'grouned':
         app.rectColor = 'green'
     elif testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
-        app.rectColor = 'blue'
+        app.rectColor = 'yellow'
     if app.isJumpingUp == True:
         app.rectTop1 += app.dy
         app.dy += app.ddy
         if app.dy <= 0:
-            app.rectColor = 'green'
-        # if testCollision(app) == 'grouned':
+            app.rectColor = 'blue'
         if testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
             app.dy = 0 
             app.ddy = 0
             app.isJumpingUp = False
-    else:
-        if testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) != 'grouned':
-            app.rectTop1 += 5
 
     
 
 def redrawAll(app):
-    drawRect(app.rectLeft1, app.rectTop1, 60, 60, fill = app.rectColor, align = 'center')
     drawRect(app.rectLeft2, app.rectTop2, 300, 300, fill = 'red', align = 'center')
+    drawRect(app.rectLeft1, app.rectTop1, 60, 60, fill = app.rectColor, align = 'center')
     drawCircle(app.rectLeft1, app.rectTop1, 4)
     drawCircle(app.rectLeft2, app.rectTop2, 4)
 
