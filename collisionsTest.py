@@ -26,7 +26,8 @@ def testCollision(app, x1, y1, x2, y2, width1, height1, width2, height2):
     right1 = newX1 + width1
     right2 = newX2 + width2
 
-    if (bottom1 >= newY2 and bottom2 >= newY1 and right1 >= newX2 and right2 >= newX1):
+    if (bottom1 + 10 >= newY2 and bottom2 + 10 >= newY1 and right1 + 10 >= newX2 and right2 + 10 >= newX1):
+        print('grouned')
         return 'grouned'
     
 
@@ -42,6 +43,7 @@ def onAppStart(app):
     app.dy = -6
     app.ddy = 0.3
     app.jumpingdx = 4
+    app.jumpingdy = 3
     app.isJumpingUp = False
     app.isJumpingRight = False
     app.isJumpingLeft = False
@@ -53,12 +55,15 @@ def onKeyHold(app, keys, modifiers):
     if 'right' in keys:
         app.isMovingAtAll = True
         app.rectLeft1 += 4
+        app.jumpingdy = 3
     if 'right' in keys and 'control' in modifiers:
         app.isMovingAtAll = True
         app.rectLeft1 += 4
+        app.jumpingdy = 3
     elif 'left' in keys:
         app.isMovingAtAll = True
         app.rectLeft1 -= 4
+        app.jumpingdy = 3
     # elif 'up' in keys and 'right' not in keys and 'left' not in keys and testCollision(app) == 'grouned':
     elif 'up' in keys and 'right' not in keys and 'left' not in keys and testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
         app.isMovingAtAll = True
@@ -67,6 +72,7 @@ def onKeyHold(app, keys, modifiers):
         app.isJumpingUp = True
         app.dy = -6
         app.ddy = 0.3
+        app.jumpingdy = 3
         app.rectColor = 'green'
     # elif 'up' in keys and 'right' in keys and testCollision(app) == 'grouned':
     # elif 'up' in keys and 'right' in keys and 'left' not in keys and testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
@@ -98,8 +104,16 @@ def onKeyHold(app, keys, modifiers):
 
 
 def onStep(app):
-    if testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) != 'grouned':
+    if testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) != 'grouned' and app.isJumpingUp == False:
         app.rectColor = 'green'
+        app.rectTop1 += app.jumpingdy
+        app.jumpingdy += app.ddy
+        if app.dy <= 0:
+            app.rectColor = 'blue'
+        if testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
+            app.dy = 0 
+            app.ddy = 0
+            app.isJumpingUp = False
     elif testCollision(app, app.rectLeft1, app.rectTop1, app.rectLeft2, app.rectTop2, app.width1, app.height1, app.width2, app.height2) == 'grouned':
         app.rectColor = 'yellow'
     if app.isJumpingUp == True:

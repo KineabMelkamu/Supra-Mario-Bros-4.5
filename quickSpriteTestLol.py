@@ -1,11 +1,12 @@
 from cmu_graphics import *
 from PIL import Image
 import os, pathlib
+import math
+
+#All sprites resized by https://www.piskelapp.com/p/create/sprite
 
 def openImage(fileName):
         return Image.open(os.path.join(pathlib.Path(__file__).parent,fileName))
-
-
 
 class Mario:
     #Lives and death value
@@ -30,6 +31,7 @@ class Mario:
         self.dy = -6
         self.defaultDy = -6
         self.ddy = 0.3
+        self.jumpingdy = 3
         self.defaultDdy = 0.3
 
         #MarioHitBoxes
@@ -44,7 +46,7 @@ class Mario:
         self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig = self.mariox + 14, self.marioy+146, 50, 15  
 
         #Mario Solid Surface 
-        self.groundx, self.groundy, self.groundWidth, self.groundHeight = 0, 0, 0, 0
+        self.groundx, self.groundy, self.groundWidth, self.groundHeight = None, None, None, None
 
         #Mario Assets
         self.bigMarioWalkRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkRight.png')
@@ -69,7 +71,52 @@ class Mario:
         self.smallMarioJumpRight2 = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\marioRightJumpFrame2.png') 
         self.smallMarioJumpLeft1 = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\marioLeftJumpFrame1.png')
         self.smallMarioJumpLeft2 = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\jumpLeftJumpFrame2.png')
-        
+
+        self.fireMarioWalkRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\\fireMarioWalkRight.png')
+        self.fireMarioWalkLeft = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\\fireMarioWalkLeft.png')
+        self.fireMarioIdleRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\idleFireMarioRight.png')
+        self.fireMarioIdleLeft = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\idleFireMarioLeft.png')
+        self.fireMarioCrouchRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\\fireMarioCrouchRight.png')
+        self.fireMarioCrouchLeft = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\\fireMarioCrouchLeft.png')
+        self.fireMarioJumpRight1 = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\\fireMarioJumpRightFrame1.png')
+        self.fireMarioJumpRight2 = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\\fireMarioJumpRightFrame2.png')
+        self.fireMarioJumpLeft1 = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\\fireMarioJumpLeftFrame1.png')
+        self.fireMarioJumpLeft2 = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\fireFlowerMario\\fireMarioJumpLeftFrame2.png')
+
+
+        fireMarioIdleRightWidth, fireMarioIdleRightHeight = self.fireMarioIdleRight.size
+        self.fireMarioIdleRight = self.fireMarioIdleRight.resize((fireMarioIdleRightWidth//4, fireMarioIdleRightHeight//4))
+        self.fireMarioIdleRight = CMUImage(self.fireMarioIdleRight)
+
+        fireMarioIdleLeftWidth, fireMarioIdleLeftHeight = self.fireMarioIdleLeft.size
+        self.fireMarioIdleLeft = self.fireMarioIdleLeft.resize((fireMarioIdleLeftWidth//4, fireMarioIdleLeftHeight//4))
+        self.fireMarioIdleLeft = CMUImage(self.fireMarioIdleLeft)
+
+        fireMarioCrouchRightWidth, fireMarioCrouchRightHeight = self.fireMarioCrouchRight.size
+        self.fireMarioCrouchRight = self.fireMarioCrouchRight.resize((fireMarioCrouchRightWidth//4, fireMarioCrouchRightHeight//4))
+        self.fireMarioCrouchRight = CMUImage(self.fireMarioCrouchRight)
+
+        fireMarioCrouchLeftWidth, fireMarioCrouchLeftHeight = self.fireMarioCrouchLeft.size
+        self.fireMarioCrouchLeft = self.fireMarioCrouchLeft.resize((fireMarioCrouchLeftWidth//4, fireMarioCrouchLeftHeight//4))
+        self.fireMarioCrouchLeft = CMUImage(self.fireMarioCrouchLeft)
+
+        fireMarioJumpRight1Width, fireMarioJumpRight1Height = self.fireMarioJumpRight1.size
+        self.fireMarioJumpRight1 = self.fireMarioJumpRight1.resize((fireMarioJumpRight1Width//4, fireMarioJumpRight1Height//4))
+        self.fireMarioJumpRight1 = CMUImage(self.fireMarioJumpRight1)
+
+        fireMarioJumpRight2Width, fireMarioJumpRight2Height = self.fireMarioJumpRight2.size
+        self.fireMarioJumpRight2 = self.fireMarioJumpRight2.resize((fireMarioJumpRight2Width//4, fireMarioJumpRight2Height//4))
+        self.fireMarioJumpRight2 = CMUImage(self.fireMarioJumpRight2)
+
+        fireMarioJumpLeft1Width, fireMarioJumpLeft1Height = self.fireMarioJumpLeft1.size
+        self.fireMarioJumpLeft1 = self.fireMarioJumpLeft1.resize((fireMarioJumpLeft1Width//4, fireMarioJumpLeft1Height//4))
+        self.fireMarioJumpLeft1 = CMUImage(self.fireMarioJumpLeft1)
+
+        fireMarioJumpLeft2Width, fireMarioJumpLeft2Height = self.fireMarioJumpLeft2.size
+        self.fireMarioJumpLeft2 = self.fireMarioJumpLeft2.resize((fireMarioJumpLeft2Width//4, fireMarioJumpLeft2Height//4))
+        self.fireMarioJumpLeft2 = CMUImage(self.fireMarioJumpLeft2)
+
+
         bigMarioJumpRight1Width, bigMarioJumpRight1Height = self.bigMarioJumpRight1.size
         self.bigMarioJumpRight1 = self.bigMarioJumpRight1.resize((bigMarioJumpRight1Width//4, bigMarioJumpRight1Height//4))
         self.bigMarioJumpRight1 = CMUImage(self.bigMarioJumpRight1)
@@ -148,6 +195,8 @@ class Mario:
         self.spritesWalkingLeftSmall = [ ]
         self.spritesRunningLeftSmall = [ ]
         self.spriteSmallMarioDeath = []
+        self.spritesWalkingRightFire = []
+        self.spritesWalkingLeftFire = []
 
         for i in range(2):
             frameWalkingRightBig = self.bigMarioWalkRight.crop((100 + 530*i, 30, 400 + 530*i, 430))
@@ -184,6 +233,17 @@ class Mario:
             spriteFrameDeath = CMUImage(frameDeath)
             self.spriteSmallMarioDeath.append(spriteFrameDeath)
 
+            frameWalkingRightFire = self.fireMarioWalkRight.crop((100 + 530*i, 30, 400 + 530*i, 430))
+            frameWalkingRightFireWidth, frameWalkingRightFireHeight = frameWalkingRightFire.size
+            frameWalkingRightFire = frameWalkingRightFire.resize((frameWalkingRightFireWidth//4, frameWalkingRightFireHeight//4))
+            spriteWalkingRightFire = CMUImage(frameWalkingRightFire)
+            self.spritesWalkingRightFire.append(spriteWalkingRightFire)
+
+            frameWalkingLeftFire = self.fireMarioWalkLeft.crop((100 + 480*i, 25, 400 + 480*i, 425))
+            frameWalkingLeftFireWidth, frameWalkingLeftFireHeight = frameWalkingLeftFire.size
+            frameWalkingLeftFire = frameWalkingLeftFire.resize((frameWalkingLeftFireWidth//4, frameWalkingLeftFireHeight//4))
+            spriteWalkingLeftFire = CMUImage(frameWalkingLeftFire)
+            self.spritesWalkingLeftFire.append(spriteWalkingLeftFire)
         
         # app.spriteCounter shows which sprite (of the list) 
         # we should currently display
@@ -205,23 +265,25 @@ class Mario:
     # self.isInvincible = False
     # self.isHit = False
     # self.isJumping = False
-    def testCollisionMario(self, x1, y1, x2, y2, width1, height1, width2, height2):
-        newX1 = x1 - width1//2
-        newY1 = y1 - height1//2
-        newX2 = x2 - width2//2
-        newY2 = y2 - height2//2
+    # def testCollisionMario(self, x1, y1, x2, y2, width1, height1, width2, height2):
+    #     newX1 = x1 - width1//2
+    #     newY1 = y1 - height1//2
+    #     newX2 = x2 - width2//2
+    #     newY2 = y2 - height2//2
 
-        bottom1 = newY1 + height1
-        bottom2 = newY2 + height2
-        right1 = newX1 + width1
+    #     bottom1 = newY1 + height1
+    #     bottom2 = newY2 + height2
+    #     right1 = newX1 + width1
+    #     right2 = newX2 + width2
 
-        if (bottom1 >= newY2 and bottom2 >= newY1 and right1 >= newX2 and right2 >= newX1):
-            return True
-        return False
+    #     if (bottom1 >= newY2 and bottom2 >= newY1 and right1 >= newX2 and right2 >= newX1):
+    #         return True
+    #     return False
 
 
     def stepMario(self):
         tempValue = self.marioState
+        print(self.marioSize)
         self.stepCounter += 1
         self.stepDeathCounter += 1
         self.mainHitx, self.mainHity = self.mariox +12, self.marioy+117
@@ -250,6 +312,7 @@ class Mario:
                 if self.marioy <= tempSelfY:
                     self.isHit = False
                     self.isInvincible = False
+                    
         if self.isJumping == True:
             self.marioy  += self.dy
             self.dy += self.ddy
@@ -262,21 +325,22 @@ class Mario:
                     self.marioState = 'jumpingRightSmallFrame2'
                 elif tempValue == 'jumpingLeftSmallFrame1':
                     self.marioState = 'jumpingLeftSmallFrame2'
-            if testCollisionMario(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight):
+            if testCollision(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight):
                 self.dy = 0
                 self.ddy = 0
                 self.isJumping = False
-                if self.marioSize == 'big' and self.tempValue == 'jumpingRightBigFrame2':
+                if self.marioSize == 'big' and tempValue == 'jumpingRightBigFrame2':
                     self.marioState = 'idle'
-                elif self.marioSize == 'small' and self.tempValue == 'jumpingLeftBigFrame2':
+                elif self.marioSize == 'small' and tempValue == 'jumpingLeftBigFrame2':
                     self.marioState = 'idleBigLeft'
-                elif self.marioSize == 'small' and self.tempValue == 'jumpingRightSmallFrame2':
+                elif self.marioSize == 'small' and tempValue == 'jumpingRightSmallFrame2':
                     self.marioState = 'idleSmallRight'
-                elif self.marioSize == 'small' and self.tempValue == 'jumpingLeftSmallFrame2':
+                elif self.marioSize == 'small' and tempValue == 'jumpingLeftSmallFrame2':
                     self.marioState = 'idleSmallLeft'
+                elif self.marioSize == 'fire' and tempValue == 'jumpingRightFireFrame2':
+                    self.marioState = 'idleRightFire'
+            
         
-
-     
     def marioKeyPress(self, key):
         tempValue = self.marioSize
         if key == 'b':
@@ -288,6 +352,13 @@ class Mario:
                 self.marioState = 'idleSmallRight'
         elif key == 'k':
             Mario.isMarioDead = not Mario.isMarioDead
+        elif key == 'n':
+            if tempValue != 'fire':
+                self.marioSize = 'fire'
+                self.marioState = 'idleRightFire'
+            else:
+                self.marioSize = 'big'
+                self.marioState = 'idle'
 
     def marioHit(self):
         if self.marioSize == 'small':
@@ -316,12 +387,14 @@ class Mario:
         if self.marioSize == 'big':
             if 'right' in keys and 'left' not in keys and 'control' not in modifiers:
                 self.isMovingRight = True
+                self.jumpingdy = 3
                 if self.isScrollingRight == True:
                     self.marioState = 'walkingRightBig'
                 else:
                     self.marioState = 'walkingRightBig'
                     self.mariox += 6
             elif 'right' in keys and 'left' not in keys and 'control' in modifiers:
+                self.jumpingdy = 3
                 self.isRunning = True
                 self.isMovingRight = True
                 if self.isScrollingRight == True:
@@ -330,23 +403,29 @@ class Mario:
                     self.marioState = 'walkingRightBig'
                     self.mariox += 15
             elif 'left' in keys and 'right' not in keys and 'control' not in modifiers:
+                self.jumpingdy = 3
                 self.isScrollingRight = False
                 self.marioState = 'walkingLeftBig'
                 self.mariox -= 6
             elif 'left' in keys and 'right' not in keys and 'control' in modifiers:
+                self.jumpingdy = 3
                 self.isRunning = True
                 self.marioState = 'walkingLeftBig'
                 self.mariox -= 15
             elif 'down' in keys and tempValue == 'idle':
+                self.jumpingdy = 3
                 self.marioState = 'crouchingRightBig'
             elif 'down' in keys and tempValue == 'idleBigLeft':
+                self.jumpingdy = 3
                 self.marioState = 'crouchingLeftBig'
             elif 'up' in keys and (tempValue == 'idle' or tempValue == 'walkingRightBig') and self.isGrounded == True:
+                self.jumpingdy = 3
                 self.isJumping = True
                 self.marioState = 'jumpingRightBigFrame1'
                 self.dy = self.defaultDy
                 self.ddy = self.defaultDdy
             elif 'up' in keys and (tempValue == 'idleBigLeft' or tempValue == 'walkingLeftBig') and self.isGrounded == True:
+                self.jumpingdy = 3
                 self.isJumping = True
                 self.marioState = 'jumpingLeftBigFrame1'
                 self.dy = self.defaultDy
@@ -355,8 +434,9 @@ class Mario:
                 self.marioy += 1
             elif 'w' in keys:
                 self.marioy -= 1
-        else:
+        elif self.marioSize == 'small':
             if 'right' in keys and 'left' not in keys and 'control' not in modifiers:
+                self.jumpingdy = 3
                 self.isMovingRight = True
                 if self.isScrollingRight == True:
                     self.marioState = 'walkingRightSmall'
@@ -364,6 +444,7 @@ class Mario:
                     self.marioState = 'walkingRightSmall'
                     self.mariox += 6
             elif 'right' in keys and 'left' not in keys and 'control' in modifiers:
+                self.jumpingdy = 3
                 self.isRunning = True
                 self.isMovingRight = True
                 if self.isScrollingRight == True:
@@ -372,22 +453,30 @@ class Mario:
                     self.marioState = 'walkingRightSmall'
                     self.mariox += 15
             elif 'left' in keys and 'right' not in keys and 'control' not in modifiers:
+                self.jumpingdy = 3
                 self.marioState = 'walkingLeftSmall'
                 self.mariox -= 6
             elif 'left' in keys and 'right' not in keys and 'control' in modifiers:
+                self.jumpingdy = 3
                 self.isRunning = True
                 self.marioState = 'walkingLeftSmall'
                 self.mariox -= 15
             elif 'down' in keys and tempValue == 'idleSmallRight':
+                self.jumpingdy = 3
                 self.marioState = 'crouchingRightSmall'
             elif 'down' in keys and tempValue == 'idleSmallLeft':
+                self.jumpingdy = 3
                 self.marioState = 'crouchingLeftSmall'
             elif 'up' in keys and (tempValue == 'idleSmallLeft' or tempValue == 'walkingLeftSmall') and self.isGrounded == True:
+                #JUMPING IS NOT WORKING 
+                self.jumpingdy = 3
                 self.isJumping = True
                 self.marioState = 'jumpingLeftSmallFrame1'
                 self.dy = self.defaultDy
                 self.ddy = self.defaultDdy
             elif 'up' in keys and (tempValue == 'idleSmallRight' or tempValue == 'walkingRightSmall') and self.isGrounded == True:
+                #JUMPING IS NOT WORKING
+                self.jumpingdy = 3 
                 self.isJumping = True
                 self.marioState = 'jumpingRightSmallFrame1'
                 self.dy = self.defaultDy
@@ -396,6 +485,57 @@ class Mario:
                 self.marioy += 1
             elif 'w' in keys:
                 self.marioy -= 1
+        elif self.marioSize == 'fire':
+            if 'right' in keys and 'left' not in keys and 'control' not in modifiers:
+                self.isMovingRight = True
+                self.jumpingdy = 3
+                if self.isScrollingRight == True:
+                    self.marioState = 'walkingRightFire'
+                else:
+                    self.marioState = 'walkingRightFire'
+                    self.mariox += 6
+            elif 'right' in keys and 'left' not in keys and 'control' in modifiers:
+                self.jumpingdy = 3
+                self.isRunning = True
+                self.isMovingRight = True
+                if self.isScrollingRight == True:
+                    self.marioState = 'walkingRightFire'
+                else:
+                    self.marioState = 'walkingRightFire'
+                    self.mariox += 15
+            elif 'left' in keys and 'right' not in keys and 'control' not in modifiers:
+                self.jumpingdy = 3
+                self.isScrollingRight = False
+                self.marioState = 'walkingLeftFire'
+                self.mariox -= 6
+            elif 'left' in keys and 'right' not in keys and 'control' in modifiers:
+                self.jumpingdy = 3
+                self.isRunning = True
+                self.marioState = 'walkingLeftFire'
+                self.mariox -= 15
+            elif 'down' in keys and tempValue == 'idleRightFire':
+                self.jumpingdy = 3
+                self.marioState = 'crouchingRightFire'
+            elif 'down' in keys and tempValue == 'idleLeftFire':
+                self.jumpingdy = 3
+                self.marioState = 'crouchingLeftFire'
+            elif 'up' in keys and (tempValue == 'idleRightFire' or tempValue == 'walkingRightFire') and self.isGrounded == True:
+                self.jumpingdy = 3
+                self.isJumping = True
+                self.marioState = 'jumpingRightFireFrame1'
+                self.dy = self.defaultDy
+                self.ddy = self.defaultDdy
+            elif 'up' in keys and (tempValue == 'idleLeftFire' or tempValue == 'walkingLeftFire') and self.isGrounded == True:
+                self.jumpingdy = 3
+                self.isJumping = True
+                self.marioState = 'jumpingLeftFireFrame1'
+                self.dy = self.defaultDy
+                self.ddy = self.defaultDdy
+            elif 's' in keys:
+                self.marioy += 1
+            elif 'w' in keys:
+                self.marioy -= 1
+
 
     def marioKeyRelease(self, key, modifier):
         if self.marioSize == 'big':
@@ -440,6 +580,27 @@ class Mario:
             elif modifier == 'control':
                 self.isRunning = False
 
+        elif self.marioSize == 'fire':
+            if (key == 'right'):
+                self.isMovingRight = False
+                self.isRunning = False
+                self.isScrollingRight = False
+                self.marioState = 'idleRightFire'
+            elif key == 'left':
+                self.isScrollingRight = False
+                self.isRunning = False
+                self.marioState = 'idleLeftFire'
+            elif key == 'down' and self.marioState == 'crouchingRightFire':
+                self.isScrollingRight = False
+                self.isRunning = False
+                self.marioState = 'idleRightFire'
+            elif key == 'down' and self.marioState == 'crouchingLeftFire':
+                self.isScrollingRight = False
+                self.isRunning = False
+                self.marioState = 'idleLeftFire'
+            elif modifier == 'control':
+                self.isRunning = False
+
     def drawMario(self):
         if not Mario.isMarioDead:
             if self.marioSize == 'big':
@@ -455,7 +616,7 @@ class Mario:
                     drawImage(self.bigMarioIdleLeft, self.mariox + 14, self.marioy + 113, align = 'center')
                 elif self.marioState == 'crouchingRightBig':
                     drawImage(self.bigMarioCrouchRight, self.mariox, self.marioy+ 133, align = 'center')
-                elif self.marioState == 'crouchingLeftBig':s
+                elif self.marioState == 'crouchingLeftBig':
                     drawImage(self.bigMarioCrouchLeft, self.mariox, self.marioy+ 133, align = 'center')
                 elif self.marioState == 'jumpingRightBigFrame1':
                     drawImage(self.bigMarioJumpRight1, self.mariox + 10, self.marioy+ 105, align = 'center')
@@ -466,7 +627,7 @@ class Mario:
                 elif self.marioState == 'jumpingLeftBigFrame2':
                     drawImage(self.bigMarioJumpRight2, self.mariox + 10, self.marioy+ 105, align = 'center')
 
-            else:
+            elif self.marioSize == 'small':
                 if self.marioState == 'idleSmallLeft':
                     drawImage(self.smallMarioIdleLeft, self.mariox + 15, self.marioy+ 125, align = 'center')
                 elif self.marioState == 'idleSmallRight':
@@ -489,7 +650,31 @@ class Mario:
                     drawImage(self.smallMarioJumpRight1, self.mariox+15, self.marioy+ 120, align = 'center')
                 elif self.marioState == 'jumpingRightSmallFrame2':
                     drawImage(self.smallMarioJumpRight2, self.mariox+15, self.marioy+ 120, align = 'center')
-        
+
+            elif self.marioSize == 'fire':
+                if self.marioState == 'walkingRightFire':
+                    spriteWalkingRightFire = self.spritesWalkingRightFire[self.spriteCounter]
+                    drawImage(spriteWalkingRightFire, self.mariox+6, self.marioy+ 113, align = 'center')
+                elif self.marioState == 'walkingLeftFire':
+                    spriteWalkingLeftFire = self.spritesWalkingLeftFire[self.spriteCounter]
+                    drawImage(spriteWalkingLeftFire, self.mariox + 18, self.marioy+ 113, align = 'center')
+                elif self.marioState == 'idleRightFire':
+                    drawImage(self.fireMarioIdleRight, self.mariox + 15, self.marioy+ 113, align = 'center')
+                elif self.marioState == 'idleLeftFire':
+                    drawImage(self.fireMarioIdleLeft, self.mariox + 14, self.marioy + 113, align = 'center')
+                elif self.marioState == 'crouchingRightFire':
+                    drawImage(self.fireMarioCrouchRight, self.mariox, self.marioy+ 133, align = 'center')
+                elif self.marioState == 'crouchingLeftFire':
+                    drawImage(self.fireMarioCrouchLeft, self.mariox, self.marioy+ 133, align = 'center')
+                elif self.marioState == 'jumpingRightFireFrame1':
+                    drawImage(self.fireMarioJumpRight1, self.mariox + 10, self.marioy+ 105, align = 'center')
+                elif self.marioState == 'jumpingRightFireFrame2':
+                    drawImage(self.fireMarioJumpRight2, self.mariox + 10, self.marioy+ 105, align = 'center')
+                elif self.marioState == 'jumpingLeftFireFrame1':
+                    drawImage(self.fireMarioJumpLeft1, self.mariox + 10, self.marioy+ 105, align = 'center')
+                elif self.marioState == 'jumpingLeftFireFrame2':
+                    drawImage(self.fireMarioJumpLeft2, self.mariox + 10, self.marioy+ 105, align = 'center')
+
         else:
             spriteDeath = self.spriteSmallMarioDeath[self.spriteCounter]
             drawImage(spriteDeath, self.mariox, self.marioy + 100, align = 'center')
@@ -650,12 +835,45 @@ class structures:
     def draw(self):
         drawRect(self.x, self.y, self.width, self.height, fill = None, border = 'pink', align = 'center')
 
-        
+class projectiles: 
+    def __init__(self, x, y, projectileType, direction):
+        self.x, self.y, self.projectileType, self.direction = x, y, projectileType, direction
+        self.exists = True
+
+        self.fireBall = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\\fireball.png")
+
+        fireBallWidth, fireBallHeight = self.fireBall.size
+        self.fireBall = self.fireBall.resize((fireBallWidth//12, fireBallHeight//12))
+        self.fireBall = CMUImage(self.fireBall)
+        self.fireBallBoxX, self.fireBallBoxY, self.fireBallBoxWidth, self.fireBallBoxHeight = self.x, self.y, 30, 30
+         
+
+    def step(self):
+        if self.exists:
+            self.fireBallBoxX, self.fireBallBoxY = self.x, self.y
+            if self.direction == 'right':
+                self.x += 5
+                self.y = 19*math.sin(1/10*self.x) +300
+            elif self.direction == 'left':
+                self.x -= 5
+                self.y = 19*math.sin(1/10*self.x) +300
+
+    def onKeyPress(self, key):
+        if key == 'o':
+            self.exists = not self.exists
+
+    def drawProjectile(self):
+        if self.exists:
+            if self.projectileType == 'fireball':
+                drawImage(self.fireBall, self.x, self.y, align = 'center')
+                drawRect(self.fireBallBoxX, self.fireBallBoxY, self.fireBallBoxWidth, self.fireBallBoxHeight, fill = None, border = 'blue', align = 'center')
+
         
 ############################################################################################################
 #                                     Animaton Functions                                                   #
 ############################################################################################################
 
+#IDEA FOR COLLISION TESTER RECIVED FROM https://academy.cs.cmu.edu/exercise/12905
 def testCollision(app, x1, y1, x2, y2, width1, height1, width2, height2):
     newX1 = x1 - width1//2
     newY1 = y1 - height1//2
@@ -667,7 +885,9 @@ def testCollision(app, x1, y1, x2, y2, width1, height1, width2, height2):
     right1 = newX1 + width1
     right2 = newX2 + width2
 
-    if (bottom1 >= newY2 and bottom2 >= newY1 and right1 >= newX2 and right2 >= newX1):
+    i = 0
+
+    if (bottom1 + 10 >= newY2 and bottom2 + 10 >= newY1 and right1 + 10 >= newX2 and right2 + 10 >= newX1):
         return True
 
 
@@ -688,8 +908,8 @@ def onAppStart(app):
     app.grounds = []
     app.ground1 = structures(760, 480, 6000, 90)
     app.grounds.append(app.ground1)
-    app.ground2 = structures(605, 340, 510, 10)
-    app.grounds.append(app.ground2)
+    # app.ground2 = structures(605, 340, 510, 10)
+    # app.grounds.append(app.ground2)
 
     #powerups
     app.powerUps = []
@@ -700,6 +920,10 @@ def onAppStart(app):
     app.enemies = []
     # app.gloomba1 = enemies(500, 420, 'gloombaNotDead', 'gloomba')
     # app.enemies.append(app.gloomba1)
+
+    app.projectiles = []
+    app.fireball1 = projectiles(100,400, 'fireball', 'right')
+    app.projectiles.append(app.fireball1)
 
 def onStep(app):
     for powerup in app.powerUps:
@@ -714,7 +938,14 @@ def onStep(app):
     for structure in app.grounds:
         if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height):
             app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight = structure.x, structure.y, structure.width, structure.height
-            app.Mario.isGrounded = True
+            # print(app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight)
+            
+
+
+        #     print(app.Mario.isGrounded)
+        # print(app.Mario.isGrounded)
+    for projectile in app.projectiles:
+        projectile.step()
     
     
     app.Mario.stepMario()
@@ -753,6 +984,8 @@ def onKeyRelease(app, key, modifier):
 
 def onKeyPress(app, key):
     app.Mario.marioKeyPress(key)
+    for projectile in app.projectiles:
+        projectile.onKeyPress(key)
     
 
 def redrawAll(app):
@@ -764,11 +997,10 @@ def redrawAll(app):
         powerup.drawPowerUp()
     for enemy in app.enemies:
         enemy.drawEnemy()
+    for projectile in app.projectiles:
+        projectile.drawProjectile()
     app.Mario.drawMario()
  
-
-    
-
 def main():
     runApp(width=700, height=500)
 
