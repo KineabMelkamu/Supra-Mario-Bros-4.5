@@ -4,7 +4,7 @@ import os, pathlib
 import math
 import random
 
-#All sprites resized by https://www.piskelapp.com/p/create/sprite
+#All sprites and spritemaps resized and made on https://www.piskelapp.com/p/create/sprite
 
 def openImage(fileName):
         return Image.open(os.path.join(pathlib.Path(__file__).parent,fileName))
@@ -36,12 +36,23 @@ class Mario:
         self.isHit = False
         self.isJumping = False
         self.threwFireBall = False
+        self.hittingWall = False
+        self.numLives = 400
+        self.isKpressible = False
+
 
         self.dy = -6
         self.defaultDy = -6
         self.ddy = 0.3
         self.jumpingdy = 3
         self.defaultDdy = 0.3
+        self.terp = False
+
+        self.checkpointx, self.checkpointy = None, None
+        self.restartPoint1 = 100
+
+
+        self.canWalkLeft, self.canWalkRight = True, True
 
         #MarioHitBoxes
         self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight = self.mariox + 12, self.marioy+123, 45, 60   
@@ -55,8 +66,8 @@ class Mario:
         self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig = self.mariox + 14, self.marioy+146, 20, 15  
 
         #Mario Solid Surface 
-        self.groundx, self.groundy, self.groundWidth, self.groundHeight = None, None, None, None
-
+        self.groundx, self.groundy, self.groundWidth, self.groundHeight, self.groundType = None, None, None, None, None
+        self.wallx, self.wally, self.wallWidth, self.wallHeight = None, None, None, None
         #Mario Assets
         self.bigMarioWalkRight = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkRight.png')
         self.bigMarioWalkLeft = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\bigMarioWalkLeft.png')
@@ -261,9 +272,11 @@ class Mario:
         self.deathCounter = 0
         self.stepDeathCounter = 0
    
-
-
     def stepMario(self):
+        if Mario.isMarioDead == True:
+            self.isKpressible = True
+        else:
+            self.isKpressible = False
         self.stepCounter += 1
         self.stepDeathCounter += 1
         self.mainHitx, self.mainHity = self.mariox +12, self.marioy+117
@@ -274,8 +287,6 @@ class Mario:
         self.topHitx, self.topHity = self.mariox + 12, self.marioy+95
         self.bottomHitx, self.bottomHity= self.mariox + 12, self.marioy+140
 
-        # self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig = self.mariox + 12, self.marioy+123, 50, 15
-        # self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig = self.mariox + 12, self.marioy+146, 50, 15
         self.topHitBigx, self.topHitBigy = self.mariox + 14, self.marioy+75 
         self.bottomHitBigx, self.bottomHitBigy = self.mariox + 14, self.marioy+140
 
@@ -292,10 +303,21 @@ class Mario:
                 if self.marioy <= tempSelfY:
                     self.isHit = False
                     self.isInvincible = False
-                    
-
         if self.marioSize == 'small':
-            if not testCollision(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight) and self.isJumping == False:
+            if self.wallx != None:
+                if testCollision(self, self.mainHitx, self.mainHity, self.wallx, self.wally, self.mainHitWidth, self.mainHitHeight, self.wallWidth, self.wallHeight):
+                    if self.marioState in self.rightConds:
+                        self.mariox -= 1
+                        self.canWalkRight = False
+                        self.canWalkLeft = True
+                    elif self.marioState in self.leftConds:
+                        self.mariox += 1
+                        self.canWalkLeft = False
+                        self.canWalkRight = True
+                else:
+                    self.canWalkRight = True
+                    self.canWalkLeft = True
+            if not testCollision(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight) and self.isJumping == False and self.groundType == 'ground':
                 if self.marioState in self.rightConds:
                     self.marioState = 'jumpingRightSmallFrame1'
                     self.marioy += self.jumpingdy
@@ -304,11 +326,11 @@ class Mario:
                     self.marioState = 'jumpingLeftSmallFrame1'
                     self.marioy += self.jumpingdy
                     self.jumpingdy += self.ddy
-                if testCollision(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight):
+                if testCollision(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight) and self.groundType == 'ground':
                     self.dy =0
                     self.ddy = 0
                     self.isJumping = False
-            elif testCollision(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight):
+            elif testCollision(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight)and self.groundType == 'ground':
                 if self.marioState in self.rightConds:
                     self.marioState =  'idleSmallRight'
                 elif self.marioState in self.leftConds:
@@ -325,8 +347,22 @@ class Mario:
                     self.dy =0
                     self.ddy = 0
                     self.isJumping = False
+
         elif self.marioSize == 'big':
-            if not testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.isJumping == False:
+            if self.wallx != None:
+                if testCollision(self, self.mainHitBigx, self.mainHitBigy, self.wallx, self.wally, self.mainHitBigWidth, self.mainHitBigHeight, self.wallWidth, self.wallHeight):
+                    if self.marioState in self.rightConds:
+                        self.mariox -= 1
+                        self.canWalkRight = False
+                        self.canWalkLeft = True
+                    elif self.marioState in self.leftConds:
+                        self.mariox += 1
+                        self.canWalkLeft = False
+                        self.canWalkRight = True
+                else:
+                    self.canWalkRight = True
+                    self.canWalkLeft = True
+            if not testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.isJumping == False and self.groundType == 'ground':
                 if self.marioState in self.rightConds:
                     self.marioState = 'jumpingRightBigFrame1'
                     self.marioy += self.jumpingdy
@@ -339,7 +375,7 @@ class Mario:
                     self.dy =0
                     self.ddy = 0
                     self.isJumping = False
-            elif testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight):
+            elif testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.groundType == 'ground':
                 if self.marioState in self.rightConds:
                     self.marioState =  'idle'
                 elif self.marioState in self.leftConds:
@@ -352,12 +388,25 @@ class Mario:
                         self.marioState =  'idle'
                     elif self.marioState in self.leftConds:
                         self.marioStaet = 'idleBigLeft'
-                if testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight):
+                if testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.groundType == 'ground':
                     self.dy =0
                     self.ddy = 0
                     self.isJumping = False
         elif self.marioSize == 'fire':
-            if not testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.isJumping == False:
+            if self.wallx != None:
+                if testCollision(self, self.mainHitBigx, self.mainHitBigy, self.wallx, self.wally, self.mainHitBigWidth, self.mainHitBigHeight, self.wallWidth, self.wallHeight):
+                    if self.marioState in self.rightConds:
+                        self.mariox -= 1
+                        self.canWalkRight = False
+                        self.canWalkLeft = True
+                    elif self.marioState in self.leftConds:
+                        self.mariox += 1
+                        self.canWalkLeft = False
+                        self.canWalkRight = True
+                else:
+                    self.canWalkRight = True
+                    self.canWalkLeft = True
+            if not testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.isJumping == False and self.groundType == 'ground':
                 if self.marioState in self.rightConds:
                     self.marioState = 'jumpingRightFireFrame1'
                     self.marioy += self.jumpingdy
@@ -366,11 +415,11 @@ class Mario:
                     self.marioState = 'jumpingLeftFireFrame1'
                     self.marioy += self.jumpingdy
                     self.jumpingdy += self.ddy
-                if testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight):
+                if testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.groundType == 'ground':
                     self.dy =0
                     self.ddy = 0
                     self.isJumping = False
-            elif testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight):
+            elif testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.groundType == 'ground':
                 if self.marioState in self.rightConds:
                     self.marioState =  'idleRightFire'
                 elif self.marioState in self.leftConds:
@@ -383,15 +432,26 @@ class Mario:
                         self.marioState =  'idleRightFire'
                     elif self.marioState in self.leftConds:
                         self.marioStaet = 'idleLeftFire'
-                if testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight):
+                if testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight) and self.groundType == 'ground':
                     self.dy =0
                     self.ddy = 0
                     self.isJumping = False
 
 
-                    
-                    
-            
+
+        if self.numLives != 400:
+            if self.numLives >= 200:
+                if self.marioSize == 'fire' and not self.terp:
+                    self.marioSize = 'big'
+                    self.terp = True
+                elif self.marioSize == 'big' and not self.terp:
+                    self.marioSize = 'small'
+                    self.terp = True
+            elif self.numLives < 200:
+                if self.marioSize != 'small':
+                    self.marioSize = 'small'
+            if self.numLives <= 0:
+                Mario.isMarioDead = True
         
     def marioKeyPress(self, key):
         tempValue = self.marioSize
@@ -402,8 +462,10 @@ class Mario:
             else:
                 self.marioSize = 'small'
                 self.marioState = 'idleSmallRight'
-        elif key == 'k':
-            Mario.isMarioDead = not Mario.isMarioDead
+        elif key == 'k' and self.isKpressible == True:
+            Mario.isMarioDead = False
+        elif key == 'j':
+            Mario.isMarioDead = True
         elif key == 'n':
             if tempValue != 'fire':
                 self.marioSize = 'fire'
@@ -413,6 +475,11 @@ class Mario:
                 self.marioState = 'idle'
         if self.marioSize == 'fire' and key == 'x':
             self.threwFireBall = True
+        
+        if key == 'p':
+            if self.checkpointx != None and self.checkpointy != None:
+                self.marioSize = 'small'
+                self.mariox, self.marioy = self.checkpointx, self.checkpointy - 200
 
     def marioHit(self):
         if self.marioSize == 'small':
@@ -422,13 +489,10 @@ class Mario:
             self.marioSize = 'small'
             self.isHit = False
 
-
-
-
     def marioKeyHold(self, keys, modifiers):
         tempValue = self.marioState
         if self.marioSize == 'big':
-            if 'right' in keys and 'left' not in keys and 'control' not in modifiers:
+            if 'right' in keys and 'left' not in keys and 'control' not in modifiers and self.canWalkRight:
                 self.isMovingRight = True
                 self.jumpingdy = 3
                 if self.isScrollingRight == True:
@@ -436,7 +500,7 @@ class Mario:
                 else:
                     self.marioState = 'walkingRightBig'
                     self.mariox += 6
-            elif 'right' in keys and 'left' not in keys and 'control' in modifiers:
+            elif 'right' in keys and 'left' not in keys and 'control' in modifiers and self.canWalkRight:
                 self.jumpingdy = 3
                 self.isRunning = True
                 self.isMovingRight = True
@@ -445,12 +509,12 @@ class Mario:
                 else:
                     self.marioState = 'walkingRightBig'
                     self.mariox += 15
-            elif 'left' in keys and 'right' not in keys and 'control' not in modifiers:
+            elif 'left' in keys and 'right' not in keys and 'control' not in modifiers and self.canWalkLeft:
                 self.jumpingdy = 3
                 self.isScrollingRight = False
                 self.marioState = 'walkingLeftBig'
                 self.mariox -= 6
-            elif 'left' in keys and 'right' not in keys and 'control' in modifiers:
+            elif 'left' in keys and 'right' not in keys and 'control' in modifiers and self.canWalkLeft:
                 self.jumpingdy = 3
                 self.isRunning = True
                 self.marioState = 'walkingLeftBig'
@@ -470,8 +534,8 @@ class Mario:
                 self.marioy += 1
             elif 'w' in keys:
                 self.marioy -= 1
-        elif self.marioSize == 'small':
-            if 'right' in keys and 'left' not in keys and 'control' not in modifiers:
+        elif self.marioSize == 'small' and Mario.isMarioDead == False:
+            if 'right' in keys and 'left' not in keys and 'control' not in modifiers and self.canWalkRight:
                 self.jumpingdy = 3
                 self.isMovingRight = True
                 if self.isScrollingRight == True:
@@ -479,7 +543,7 @@ class Mario:
                 else:
                     self.marioState = 'walkingRightSmall'
                     self.mariox += 6
-            elif 'right' in keys and 'left' not in keys and 'control' in modifiers:
+            elif 'right' in keys and 'left' not in keys and 'control' in modifiers and self.canWalkRight:
                 self.jumpingdy = 3
                 self.isRunning = True
                 self.isMovingRight = True
@@ -488,11 +552,11 @@ class Mario:
                 else:
                     self.marioState = 'walkingRightSmall'
                     self.mariox += 15
-            elif 'left' in keys and 'right' not in keys and 'control' not in modifiers:
+            elif 'left' in keys and 'right' not in keys and 'control' not in modifiers and self.canWalkLeft:
                 self.jumpingdy = 3
                 self.marioState = 'walkingLeftSmall'
                 self.mariox -= 6
-            elif 'left' in keys and 'right' not in keys and 'control' in modifiers:
+            elif 'left' in keys and 'right' not in keys and 'control' in modifiers and self.canWalkLeft:
                 self.jumpingdy = 3
                 self.isRunning = True
                 self.marioState = 'walkingLeftSmall'
@@ -512,9 +576,8 @@ class Mario:
                 self.marioy += 1
             elif 'w' in keys:
                 self.marioy -= 1
-    
         elif self.marioSize == 'fire':
-            if 'right' in keys and 'left' not in keys and 'control' not in modifiers:
+            if 'right' in keys and 'left' not in keys and 'control' not in modifiers and self.canWalkRight:
                 self.isMovingRight = True
                 self.jumpingdy = 3
                 if self.isScrollingRight == True:
@@ -522,7 +585,7 @@ class Mario:
                 else:
                     self.marioState = 'walkingRightFire'
                     self.mariox += 6
-            elif 'right' in keys and 'left' not in keys and 'control' in modifiers:
+            elif 'right' in keys and 'left' not in keys and 'control' in modifiers and self.canWalkRight:
                 self.jumpingdy = 3
                 self.isRunning = True
                 self.isMovingRight = True
@@ -531,12 +594,12 @@ class Mario:
                 else:
                     self.marioState = 'walkingRightFire'
                     self.mariox += 15
-            elif 'left' in keys and 'right' not in keys and 'control' not in modifiers:
+            elif 'left' in keys and 'right' not in keys and 'control' not in modifiers and self.canWalkLeft:
                 self.jumpingdy = 3
                 self.isScrollingRight = False
                 self.marioState = 'walkingLeftFire'
                 self.mariox -= 6
-            elif 'left' in keys and 'right' not in keys and 'control' in modifiers:
+            elif 'left' in keys and 'right' not in keys and 'control' in modifiers and self.canWalkLeft:
                 self.jumpingdy = 3
                 self.isRunning = True
                 self.marioState = 'walkingLeftFire'
@@ -547,7 +610,7 @@ class Mario:
             elif 'down' in keys and tempValue == 'idleLeftFire':
                 self.jumpingdy = 3
                 self.marioState = 'crouchingLeftFire'
-            elif 'up' in keys and 'right' not in keys and 'left' not in keys and testCollision(self, self.mainHitx, self.mainHity, self.groundx, self.groundy, self.mainHitWidth, self.mainHitHeight, self.groundWidth, self.groundHeight):
+            elif 'up' in keys and 'right' not in keys and 'left' not in keys and testCollision(self, self.mainHitBigx, self.mainHitBigy, self.groundx, self.groundy, self.mainHitBigWidth, self.mainHitBigHeight, self.groundWidth, self.groundHeight):
                 self.isJumping = True
                 self.dy = self.defaultDy
                 self.ddy = self.defaultDdy
@@ -776,8 +839,7 @@ class Mario:
                     drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
                     drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
                     drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
-
-        else:
+        elif Mario.isMarioDead:
             spriteDeath = self.spriteSmallMarioDeath[self.spriteCounter]
             drawImage(spriteDeath, self.mariox, self.marioy + 100, align = 'center')
                
@@ -884,6 +946,14 @@ class enemies(Mario):
 
         self.isThrowingFire = False
 
+        self.thwompFallBoxx, self.thwompFallBoxy, self.thwompFallBoxWidth, self.thwompFallBoxHeight = None, None, None, None
+        self.isFalling = False
+        self.reachedBottom = False
+        self.reachedTop = False
+        self.bottom = self.y + 200
+        tempVal = self.y
+        self.top = tempVal
+
 
         self.gloombaWalkLeft = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Enemies\gloombaFrameMap.png')
         if self.enemyType == 'gloomba':
@@ -896,7 +966,9 @@ class enemies(Mario):
                 self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox = self.x + 15, self.y - 10, 50, 50
             else:
                 self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox = self.x, self.y, 1, 1
-
+        elif self.enemyType == 'thwomp':
+            self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox = self.x, self.y-10, 55, 90
+            self.fallBoxx, self.fallBoxy, self.fallBoxwidth, self.fallBoxheight = self.x, self.y, 55, 600
 
         self.bulletBill = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Enemies\\bulletBill.png")
         bulletBillWidth, bulletBillHeight = self.bulletBill.size
@@ -906,6 +978,15 @@ class enemies(Mario):
         self.rexframesnohit = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Enemies\\rexframesnothit.png')
         self.rexframes1hit = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Enemies\\rexframes1hit.png')
 
+        self.thwompFall = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Enemies\\thwompFall.png')
+        thwompFallWidth, thwompFallHeight = self.thwompFall.size
+        self.thwompFall = self.thwompFall.resize((thwompFallWidth//4, thwompFallHeight//4))
+        self.thwompFall = CMUImage(self.thwompFall)
+
+        self.thwompRest = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Enemies\\thwompRest.png')
+        thwompRestWidth, thwompRestHeight = self.thwompRest.size
+        self.thwompRest = self.thwompRest.resize((thwompRestWidth//4, thwompRestHeight//4))
+        self.thwompRest = CMUImage(self.thwompRest)
 
 
         self.spritesGloombaWalking = []
@@ -913,7 +994,6 @@ class enemies(Mario):
         self.rexWalking1Hite = []
 
         for i in range(2):
-            #(40, 40, 300, 250)      
             frameDeath = self.gloombaWalkLeft.crop((40 + 365*i, 40, 300 + 365*i, 250))
             frameDeathWidth, frameDeathHeight = frameDeath.size
             frameDeath = frameDeath.resize((frameDeathWidth//4, frameDeathHeight//4))
@@ -932,6 +1012,7 @@ class enemies(Mario):
         self.stepCounter = 0
     
     def stepEnemy(self):
+        print(self.top, self.bottom)
         if self.enemyType == 'gloomba':
             self.x -= 2
             self.goombaXBox, self.goombaYBox = self.x, self.y
@@ -954,6 +1035,22 @@ class enemies(Mario):
                 self.isThrowingFire = True
             else:
                 self.isThrowingFire = False
+        elif self.enemyType == 'thwomp':
+            self.goombaXBox, self.goombaYBox = self.x, self.y-10
+            self.fallBoxx = self.x
+            if testCollision(self, self.fallBoxx, self.fallBoxy, self.marioxbox, self.marioybox, self.fallBoxwidth, self.fallBoxheight, self.mariowidthbox, self.marioheightbox):
+                self.isFalling = True
+            else:
+                self.isFalling = False
+            if self.isFalling:
+                self.enemyState = 'thwompFall'
+                if self.y <= self.bottom:
+                    self.y +=5
+                    self.isFalling = False
+            else:
+                self.enemyState = 'thwompRest'
+                if self.y >= self.top:
+                    self.y -= 5
 
     
     def drawEnemy(self):
@@ -972,6 +1069,15 @@ class enemies(Mario):
                     drawImage(spriteNoHitRex, self.x, self.y - 5, align = 'center')
                     drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = 'red', align = 'center')
                     drawRect(self.fireRectx, self.fireRecty, self.fireRectWidth, self.fireRectxHeight, fill = None, border = 'blue', align = 'center')
+        elif self.enemyType == 'thwomp':
+            if self.enemyState == 'thwompFall':
+                drawImage(self.thwompFall, self.x, self.y - 5, align = 'center')
+                drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = 'red', align = 'center')
+                drawRect(self.fallBoxx, self.fallBoxy, self.fallBoxwidth, self.fallBoxheight, fill = None, border = 'blue', align = 'center')
+            elif self.enemyState == 'thwompRest':
+                drawImage(self.thwompRest, self.x , self.y, align = 'center')
+                drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = 'red', align = 'center')
+                drawRect(self.fallBoxx, self.fallBoxy, self.fallBoxwidth, self.fallBoxheight, fill = None, border = 'blue', align = 'center')
 
 class structures:
     def __init__(self, x, y, width, height, structureType):
@@ -1029,10 +1135,44 @@ class projectiles:
                 drawImage(self.fireBall, self.x, self.y, align = 'center')
                 drawRect(self.fireBallBoxX, self.fireBallBoxY, self.fireBallBoxWidth, self.fireBallBoxHeight, fill = None, border = 'blue', align = 'center')
 
+class checkpoint(Mario):
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.checkx, self.checky = x, y
+        self.xBox, self.yBox, self.width, self.height = self.x, self.y, 30, 30
+        self.marioxbox, self.marioybox, self.mariowidthbox, self.marioheightbox = None, None, None, None
+        self.isHit = False
+
+        self.bowserFlag = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\checkPointFlags\\bowsaCheckPoint.png')
+        bowserFlagWidth, bowserFlagHeight = self.bowserFlag.size
+        self.bowserFlag = self.bowserFlag.resize((bowserFlagWidth//6, bowserFlagHeight//6))
+        self.bowserFlag = CMUImage(self.bowserFlag)
         
-############################################################################################################
-#                                     Animaton Functions                                                   #
-############################################################################################################
+        self.marioFlag = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\checkPointFlags\marioCheckPoint.png')
+        marioFlagWidth, marioFlagHeight = self.marioFlag.size
+        self.marioFlag = self.marioFlag.resize((marioFlagWidth//6, marioFlagHeight//6))
+        self.marioFlag = CMUImage(self.marioFlag)
+
+    def onStep(self):
+        self.xBox, self.yBox = self.x, self.y
+        self.checkx, self.checky = self.x, self.y
+        if testCollision(self, self.xBox, self.yBox, self.marioxbox, self.marioybox, self.width, self.height, self.mariowidthbox, self.marioheightbox) and not self.isHit:
+            self.isHit = True
+
+    def draw(self):
+        if self.isHit:
+            drawImage(self.marioFlag, self.x, self.y, align = 'center')
+            drawRect(self.xBox, self.yBox, self.width, self.height, fill = None, border = 'yellow', align = 'center')
+        elif not self.isHit:
+            drawImage(self.bowserFlag, self.x, self.y, align = 'center')
+            drawRect(self.xBox, self.yBox, self.width, self.height, fill = None, border = 'yellow', align = 'center')
+
+
+
+
+#############################################################################################################
+##                                     Animaton Functions                                                  ##
+#############################################################################################################
 
 #IDEA FOR COLLISION TESTER RECIVED FROM https://academy.cs.cmu.edu/exercise/12905
 def testCollision(app, x1, y1, x2, y2, width1, height1, width2, height2):
@@ -1047,25 +1187,38 @@ def testCollision(app, x1, y1, x2, y2, width1, height1, width2, height2):
     right2 = newX2 + width2
 
 
-    if (bottom1 + 10 >= newY2 and bottom2 + 10 >= newY1 and right1 + 3 >= newX2 and right2 + 3 >= newX1):
+    if (bottom1 + 10 >= newY2 and bottom2 + 10 >= newY1 and right1 >= newX2 and right2 >= newX1):
         return True
 
-
 def onAppStart(app):
+    #Accessed From https://www.pixilart.com/art/mario-peace-sign-pixel-art-a5592b56931aa23
     app.marioTitle = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\MarioPeaceTitle.png")
     marioTitleWidth, marioTitleHeight = app.marioTitle.size
     app.marioTitle = app.marioTitle.resize((marioTitleWidth//4, marioTitleHeight//4))
     app.marioTitle = CMUImage(app.marioTitle)
 
+    app.isPaused = False
 
     app.inspectorEnabled = False
     app.Mario = Mario(100, 288, 'idleSmallRight', 'small')
     app.stepCounter =  0
-    # app.Mario = Mario(900, 288, 'idleSmallRight', 'small')
+
     app.map1 = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Yoshi's Island.png")
     app.map1 = CMUImage(app.map1)
+
     app.backround1 = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\backrounds.png")
     app.backround1 = CMUImage(app.backround1)
+
+    #Accessed From https://www.fontspace.com/typeface-mario-world-pixel-font-f56447
+    app.titleName = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\SuperMarioWorldTitle.png")
+    titleNameWidth, titleNameHeight = app.titleName.size
+    app.titleName = app.titleName.resize((titleNameWidth//2, titleNameHeight//2))
+    app.titleName = CMUImage(app.titleName)
+    app.endWords = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\WIN SCREEN.png")
+    endWordsWidth, endWordsHeight = app.endWords.size
+    app.endWords = app.endWords.resize((endWordsWidth//2, endWordsHeight//2))
+    app.endWords = CMUImage(app.endWords)
+
     app.map1x, app.map1y = app.width//2 + 4770, app.height//2 - 150
     app.backround1x, app.backround1y = app.width//2, app.height//2 - 100 
     app.stepsPerSecond = 30
@@ -1083,43 +1236,96 @@ def onAppStart(app):
 
     #structures:
     app.grounds = []
-    app.ground1 = structures(760, 480, 6000, 90, 'ground')
-    app.end1 = structures(9750, 240, 200, 400, 'endCon')
+    app.wall1 = structures(855, 455, 510, 200, 'wall')
+    app.grounds.append(app.wall1)
+    app.ground1 = structures(765, 480, 6000, 90, 'ground')
     app.grounds.append(app.ground1)
-    app.grounds.append(app.end1)
-    app.ground2 = structures(605, 340, 510, 10, 'ground')
+    app.ground2 = structures(855, 340, 510, 10, 'ground')
     app.grounds.append(app.ground2)
+    app.ground3 = structures(1520, 310, 220, 10, 'ground')
+    app.grounds.append(app.ground3)
+    app.ground4 = structures(3830, 410, 150, 10, 'ground')
+    app.grounds.append(app.ground4)
+    app.ground5 = structures(3970, 380, 130, 10, 'ground')
+    app.grounds.append(app.ground5)
+    app.ground6 = structures(4080, 350, 100, 10, 'ground')
+    app.grounds.append(app.ground6)
+    app.ground7 = structures(4350, 310, 455, 10, 'ground')
+    app.grounds.append(app.ground7)
+    app.ground8 = structures(5589, 440, 2800, 10, 'ground')
+    app.grounds.append(app.ground8)
+    app.ground9 = structures(6070, 350, 145, 10, 'ground')
+    app.grounds.append(app.ground9)
+    app.ground10 = structures(6165, 250, 235, 10, 'ground')
+    app.grounds.append(app.ground10)
+    app.ground11 = structures(6330, 350, 205, 10, 'ground')
+    app.grounds.append(app.ground11)
+    app.ground12 = structures(6935, 290, 295, 10, 'ground')
+    app.grounds.append(app.ground12)
+    app.ground13 = structures(7135, 380, 295, 10, 'ground')
+    app.grounds.append(app.ground13)
+    app.ground14 = structures(8750, 445, 2800, 10, 'ground')
+    app.grounds.append(app.ground14)
+    app.end1 = structures(9800, 445, 300, 60000, 'endCon')
+    app.grounds.append(app.end1)
+
+    app.checkpoints = []
+    app.initcheckpoint = checkpoint(100, 410)
+    app.checkpoints.append(app.initcheckpoint)
+    app.checkpoint1 = checkpoint(7600, 410)
+    app.checkpoints.append(app.checkpoint1)
+
 
     #powerups
     app.powerUps = []
     app.fireFlower1 = PowerUps(550, 400, 'superMushroom')
+    app.fireFlower2 = PowerUps(590, 400, 'fireFlower')
     app.powerUps.append(app.fireFlower1)
+    # app.powerUps.append(app.fireFlower2)
 
     #enemies
     app.enemies = []
-    # app.gloomba1 = enemies(500, 300, 'gloombaNotDead', 'bulletBill')
-    app.gloomba1 = enemies(500, 415, 'rexNoHit', 'rex')
-    # app.gloomba1 = enemies(500, 415, 'gloombaNotDead', 'gloomba')
+    app.gloomba1 = enemies(500, 200, 'thwompRest', 'thwomp')
     app.enemies.append(app.gloomba1)
 
     app.projectiles = []
-    # app.fireball1 = projectiles(100,400, 'fireball', 'right', False, 400)
-    # app.projectiles.append(app.fireball1)
 
 def onStep(app):
     app.stepCounter += 1
     if app.isLevel1 == True:
-        if app.Mario.mariox > app.width:
-            app.Mario.mariox = app.width//2
-            app.fireFlower1.x -= app.width//2
-            app.line1x -= app.width//2
-            app.line2x -= app.width//2
-            app.map1x -= app.width//2
-            for ground in app.grounds:
-                ground.x -= app.width//2
-            for enemy in app.enemies:
-                enemy.x -= app.width//2
-        
+        if app.Mario.isMarioDead:
+            if app.Mario.checkpointx != None:
+                app.Mario.marioSize = 'small'
+                app.Mario.numLives = 400
+                methVal = app.Mario.mariox - app.Mario.checkpointx
+                # app.Mario.mariox += methVal
+                app.line1x += methVal
+                app.line2x += methVal
+                app.map1x += methVal
+                for ground in app.grounds:
+                    ground.x += methVal
+                for enemy in app.enemies:
+                    enemy.x += methVal
+                for checkpoint in app.checkpoints:
+                    checkpoint.x += methVal
+                for projectile in app.projectiles:
+                    projectile.x += methVal
+            else:
+                app.Mario.marioSize = 'small'
+                app.Mario.numLives = 400
+                methVal = app.Mario.mariox - app.restartPoint1
+                app.line1x += methVal
+                app.line2x += methVal
+                app.map1x += methVal
+                for ground in app.grounds:
+                    ground.x += methVal
+                for enemy in app.enemies:
+                    enemy.x += methVal
+                for checkpoint in app.checkpoints:
+                    checkpoint.x += methVal
+                for projectile in app.projectiles:
+                    projectile.x += methVal
+
         if app.Mario.threwFireBall:
             if app.stepCounter%9 == 0:
                 if app.Mario.marioState in app.Mario.rightConds:
@@ -1127,93 +1333,146 @@ def onStep(app):
                 if app.Mario.marioState in app.Mario.leftConds:
                     app.projectiles.append(projectiles(app.Mario.mariox, app.Mario.marioy, 'fireball', 'left', True, app.Mario.marioy))
         
-        
-                    
+                  
         for powerup in app.powerUps:
-            if powerup.powerUp == 'superMushroom' and testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, powerup.fireFlowerBoxX, powerup.fireFlowerBoxY, app.Mario.mainHitWidth, app.Mario.mainHitHeight, powerup.fireFlowerBoxWidth, powerup.fireFlowerBoxHeight) == True and app.Mario.marioSize == 'small':
-                app.Mario.marioSize = 'big'
+            if powerup.powerUp == 'superMushroom' and testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, powerup.fireFlowerBoxX, powerup.fireFlowerBoxY, app.Mario.mainHitWidth, app.Mario.mainHitHeight, powerup.fireFlowerBoxWidth, powerup.fireFlowerBoxHeight) == True:
+                if app.Mario.marioSize != 'fire':
+                    app.Mario.marioSize = 'big'
+                    powerup.isPowerUpHit = True
+                else:
+                    app.Mario.marioSize = 'fire'
+                    powerup.isPowerUpHit = True
+                app.powerUps.remove(powerup)
+            elif powerup.powerUp == 'fireFlower' and testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, powerup.fireFlowerBoxX, powerup.fireFlowerBoxY, app.Mario.mainHitWidth, app.Mario.mainHitHeight, powerup.fireFlowerBoxWidth, powerup.fireFlowerBoxHeight) == True:
+                app.Mario.marioSize = 'fire'
                 powerup.isPowerUpHit = True
                 app.powerUps.remove(powerup)
+            elif powerup.powerUp == 'oneUpMushroom':
+                if (app.Mario.numLives + 100) < 400:
+                    app.Mario.numLives += 100
+                else:
+                    app.Mario.numLives += (400-app.Mario.numLives)
+
         for enemy in app.enemies:
             if enemy.isThrowingFire:
                 if app.stepCounter%90 == 0:
                     app.projectiles.append(projectiles(enemy.x, enemy.y, 'fireball', 'left', False, enemy.y - 100))
-            if enemy.enemyType == 'rex':
-                if app.Mario.marioSize == 'small':
-                    if app.Mario.marioState != 'crouchingRightSmall' and app.Mario.marioState != 'crouchingLeftSmall':
-                        enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitx, app.Mario.mainHity, app.Mario.mainHitWidth, app.Mario.mainHitHeight
-                    else:
-                        enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitCrouchx, app.Mario.mainHitCrouchy, app.Mario.mainHitCrouchWidth, app.Mario.mainHitCrouchHeight
-                else:
-                    if app.Mario.marioState != 'crouchingRightFire' and app.Mario.marioState != 'crouchingLeftFire' and app.Mario.marioState != 'crouchingRightBig'and app.Mario.marioState != 'crouchingLeftBig':
-                        enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitBigx, app.Mario.mainHitBigy, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight
-                    else:
-                        enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitBigCrouchx, app.Mario.mainHitBigCrouchy, app.Mario.mainHitBigCrouchWidth, app.Mario.mainHitBigCrouchHeight
             if app.Mario.marioSize == 'small':
-                if testCollision(app, app.Mario.bottomHitx, app.Mario.bottomHity, enemy.goombaXBox, enemy.goombaYBox, app.Mario.bottomHitWidth, app.Mario.bottomHitHeight, enemy.goombaWidthBox, enemy.goombaHeightBox):
+                if app.Mario.marioState != 'crouchingRightSmall' and app.Mario.marioState != 'crouchingLeftSmall':
+                    enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitx, app.Mario.mainHity, app.Mario.mainHitWidth, app.Mario.mainHitHeight
+                else:
+                    enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitCrouchx, app.Mario.mainHitCrouchy, app.Mario.mainHitCrouchWidth, app.Mario.mainHitCrouchHeight
+            else:
+                if app.Mario.marioState != 'crouchingRightFire' and app.Mario.marioState != 'crouchingLeftFire' and app.Mario.marioState != 'crouchingRightBig'and app.Mario.marioState != 'crouchingLeftBig':
+                    enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitBigx, app.Mario.mainHitBigy, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight
+                else:
+                    enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitBigCrouchx, app.Mario.mainHitBigCrouchy, app.Mario.mainHitBigCrouchWidth, app.Mario.mainHitBigCrouchHeight
+            if app.Mario.marioSize == 'small':
+                if testCollision(app, app.Mario.bottomHitx, app.Mario.bottomHity, enemy.goombaXBox, enemy.goombaYBox, app.Mario.bottomHitWidth, app.Mario.bottomHitHeight, enemy.goombaWidthBox, enemy.goombaHeightBox) and enemy.enemyType != 'bulletBill' and enemy.enemyType != 'thwomp':
                     app.Mario.marioy -= 40
                     app.enemies.remove(enemy)
                 elif testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, enemy.goombaXBox, enemy.goombaYBox, app.Mario.mainHitWidth, app.Mario.mainHitHeight, enemy.goombaWidthBox, enemy.goombaHeightBox):
-                    app.Mario.marioHit()
+                    app.Mario.numLives -= 10
             else:
-                if testCollision(app, app.Mario.bottomHitBigx, app.Mario.bottomHitBigy, enemy.goombaXBox, enemy.goombaYBox, app.Mario.bottomHitWidthBig, app.Mario.bottomHitHeightBig, enemy.goombaWidthBox, enemy.goombaHeightBox):
+                if testCollision(app, app.Mario.bottomHitBigx, app.Mario.bottomHitBigy, enemy.goombaXBox, enemy.goombaYBox, app.Mario.bottomHitWidthBig, app.Mario.bottomHitHeightBig, enemy.goombaWidthBox, enemy.goombaHeightBox) and enemy.enemyType != 'bulletBill' and enemy.enemyType != 'thwomp':
                     app.Mario.marioy -= 40
                     app.enemies.remove(enemy)
                 elif testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, enemy.goombaXBox, enemy.goombaYBox, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, enemy.goombaWidthBox, enemy.goombaHeightBox):
-                    app.Mario.marioHit() 
-
+                    app.Mario.numLives -= 10
+        for checkpoint in app.checkpoints:
+            if app.Mario.marioSize == 'small':
+                if app.Mario.marioState != 'crouchingRightSmall' and app.Mario.marioState != 'crouchingLeftSmall':
+                    checkpoint.marioxbox, checkpoint.marioybox, checkpoint.mariowidthbox, checkpoint.marioheightbox = app.Mario.mainHitx, app.Mario.mainHity, app.Mario.mainHitWidth, app.Mario.mainHitHeight
+                else:
+                    checkpoint.marioxbox, checkpoint.marioybox, checkpoint.mariowidthbox, checkpoint.marioheightbox = app.Mario.mainHitCrouchx, app.Mario.mainHitCrouchy, app.Mario.mainHitCrouchWidth, app.Mario.mainHitCrouchHeight
+            else:
+                if app.Mario.marioState != 'crouchingRightFire' and app.Mario.marioState != 'crouchingLeftFire' and app.Mario.marioState != 'crouchingRightBig'and app.Mario.marioState != 'crouchingLeftBig':
+                    checkpoint.marioxbox, checkpoint.marioybox, checkpoint.mariowidthbox, checkpoint.marioheightbox = app.Mario.mainHitBigx, app.Mario.mainHitBigy, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight
+                else:
+                    checkpoint.marioxbox, checkpoint.marioybox, checkpoint.mariowidthbox, checkpoint.marioheightbox = app.Mario.mainHitBigCrouchx, app.Mario.mainHitBigCrouchy, app.Mario.mainHitBigCrouchWidth, app.Mario.mainHitBigCrouchHeight
+            checkpoint.onStep()
+            if checkpoint.isHit == True:
+                app.Mario.checkpointx, app.Mario.checkpointy = checkpoint.checkx, checkpoint.checky
         for structure in app.grounds:
             if app.Mario.marioSize == 'small':
+                if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height) and structure.structureType == 'wall':
+                    app.Mario.wallx, app.Mario.wally, app.Mario.wallWidth, app.Mario.wallHeight = structure.x, structure.y, structure.width, structure.height
                 if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height) and structure.structureType == 'ground':
-                    app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight = structure.x, structure.y, structure.width, structure.height
-                    # print(app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight)
+                    app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight, app.Mario.groundType = structure.x, structure.y, structure.width, structure.height, structure.structureType
                 elif testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height) and structure.structureType == 'endCon':
-                    print('fart')
                     app.isLevel1 = False
                     app.isNextLevelScreen = True
-            if app.Mario.marioSize == 'big':
-                if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height) and structure.structureType == 'ground':
-                    app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight = structure.x, structure.y, structure.width, structure.height
-                    # print(app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight)
+            if app.Mario.marioSize == 'big' or app.Mario.marioSize == 'fire':
+                if testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, structure.x, structure.y, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, structure.width, structure.height) and structure.structureType == 'wall':
+                    app.Mario.wallx, app.Mario.wally, app.Mario.wallWidth, app.Mario.wallHeight = structure.x, structure.y, structure.width, structure.height
+                if testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, structure.x, structure.y, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, structure.width, structure.height) and structure.structureType == 'ground':
+                    app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight, app.Mario.groundType = structure.x, structure.y, structure.width, structure.height, structure.structureType
                 elif testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, structure.x, structure.y, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, structure.width, structure.height) and structure.structureType == 'endCon':
-                    print('fart')
-                    app.isLevel1 = False
                     app.isNextLevelScreen = True
+                    app.isLevel1 = False
+                    
 
-            #     print(app.Mario.isGrounded)
-            # print(app.Mario.isGrounded)
         for projectile in app.projectiles:
             projectile.step()
-        
-        
+            if projectile.isFreindly == False:
+                if app.Mario.marioSize == 'big' or app.Mario.marioSize == 'fire':
+                    if app.Mario.marioState == 'crouchingRightBig' or app.Mario.marioState == 'crouchingLeftBig' or app.Mario.marioState == 'crouchingRightFire' or app.Mario.marioState == 'crouchingLeftFire':
+                        if testCollision(app, app.Mario.mainHitBigCrouchx, app.Mario.mainHitBigCrouchy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitBigCrouchWidth, app.Mario.mainHitBigCrouchHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
+                            app.Mario.numLives -= 20
+                    else:
+                        if testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
+                            app.Mario.numLives -= 20          
+                else:
+                    if app.Mario.marioState == 'crouchingRightSmall' or app.Mario.marioState == 'crouchingLeftSmall':
+                        if testCollision(app, app.Mario.mainHitCrouchx, app.Mario.mainHitCrouchy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitCrouchWidth, app.Mario.mainHitCrouchHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
+                            app.Mario.numLives -= 20
+                    else:
+                        if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitWidth, app.Mario.mainHitHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
+                            app.Mario.numLives -= 20
+            else:
+                for enemy in app.enemies:
+                    if testCollision(app, enemy.goombaXBox, enemy.goombaYBox, projectile.fireBallBoxX, projectile.fireBallBoxY, enemy.goombaWidthBox, enemy.goombaHeightBox, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight) and enemy.enemyType != 'thwomp' and enemy.enemyType != 'bulletBill':
+                        app.enemies.remove(enemy)
+                        app.projectiles.remove(projectile)
+                
         app.Mario.stepMario()
         for powerup in app.powerUps:
             powerup.stepPowerUp()
         for enemy in app.enemies:
             enemy.stepEnemy()
-        if app.Mario.mariox > app.width//2:
+        if app.Mario.mariox > app.width//2 and app.Mario.canWalkRight:
             app.Mario.isScrollingRight = True
             if app.Mario.isMovingRight == True and app.Mario.isRunning == False:
-                app.fireFlower1.x -=5
                 app.line1x -= 5
                 app.line2x -= 5
                 app.map1x -= 5
                 app.Mario.groundx -= 5
+                if app.Mario.wallx != None:
+                    app.Mario.wallx -= 5
                 for ground in app.grounds:
                     ground.x -=5
                 for enemy in app.enemies:
                     enemy.x -=5
+                for powerup in app.powerUps:
+                    powerup.x -= 5
+                for checkpoint in app.checkpoints:
+                    checkpoint.x -=5
             elif app.Mario.isMovingRight == True and app.Mario.isRunning == True:
-                app.fireFlower1.x -=10
                 app.line1x -= 10
                 app.line2x -= 10
                 app.map1x -= 10
+                app.Mario.groundx -= 10
+                if app.Mario.wallx != None:
+                    app.Mario.wallx -= 10
                 for ground in app.grounds:
                     ground.x -=10
                 for enemy in app.enemies:
                     enemy.x -=10
+                for powerup in app.powerUps:
+                    powerup.x -= 10
+                for checkpoint in app.checkpoints:
+                    checkpoint.x -=10
 
-        app.fireFlower1.stepPowerUp()
 
 def onKeyHold(app, keys, modifiers):
     app.Mario.marioKeyHold(keys, modifiers)
@@ -1232,21 +1491,23 @@ def onKeyPress(app, key):
             projectile.onKeyPress(key)
     if app.isNextLevelScreen:
         if key == 'z':
-            app.isNextLevelScreen = False
             app.isLevel2 = True
+            app.isNextLevelScreen = False
             app.isLevel1 = False
             app.isOnTitleScreen = False
     
-
 def redrawAll(app):
     if app.isTitleScreen == True:
-        drawRect(0,0, app.width, app.height, fill = 'blue')
+        drawRect(0,0, 700, 900, fill = 'yellow')
         drawImage(app.marioTitle, app.width//2 + 20, app.height//2, align = 'center')
-        drawLabel('WELCOME TO SUPER MARIO BROS 4.5!', app.width//2, app.height//2 - 200, size = 22, bold = True)
-        drawLabel('PRESS Z TO START', app.width//2, app.height//2 + 200, size = 22, bold = True)
+        drawImage(app.titleName, app.width//2, app.height//2 - 200, align = 'center')
+        drawLabel('PRESS Z TO START', app.width//2, app.height//2 + 200, size = 30, bold = True)
     if app.isLevel1 == True:
         drawImage(app.backround1, app.backround1x, app.backround1y, align = 'center')
         drawImage(app.map1, app.map1x, app.map1y, align = 'center')
+        drawLabel(f'LIVES: {app.Mario.numLives}', 50, 20, size = 16)
+        if app.Mario.isKpressible == True:
+            drawLabel('PRESS K TO RESTART', app.width//2, app.height//2, size = 30)
         for ground in app.grounds:
             ground.draw()
         for powerup in app.powerUps:
@@ -1255,10 +1516,14 @@ def redrawAll(app):
             enemy.drawEnemy()
         for projectile in app.projectiles:
             projectile.drawProjectile()
+        for checkpoint in app.checkpoints:
+            checkpoint.draw()
         app.Mario.drawMario()
     if app.isNextLevelScreen:
-        drawRect(0,0, app.width, app.height, fill = 'yellow')
-    if app.isLevel2 == 2:
+        drawRect(0,0, app.width, app.height, fill = 'black')
+        drawLabel("APPROCHING FINAL LEVEL, PRESS Z TO ENTER...", app.width//2, app.height//2, size = 16, fill = 'white')
+        drawLabel("IF YOU DARE!!!", app.width//2, app.height//2 + 60, size = 25, fill = 'white')
+    if app.isLevel2:
         drawRect(0,0, app.width, app.height, fill = 'pink')
  
 def main():

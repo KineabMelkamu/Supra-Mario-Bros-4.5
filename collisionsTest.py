@@ -1,20 +1,5 @@
 from cmu_graphics import *
 
-# def distance(x0, y0, x1, y1):
-#     return ((x0-x1)**2 + (y0-y1)**2)**0.5
-
-# # def testCollision(app):
-#     # print(f'app.rectTop1 - app.rectTop2 = {abs(app.rectTop1 - app.rectTop2)}')
-#     # print(f'app.rectLeft2 - 150 = {app.rectLeft2 - 150}')
-#     # print(f'app.rectLeft1 + 30 = {app.rectLeft1 + 30}')
-#     # print(f'app.rectLeft2 + 150 = {app.rectLeft2 + 150}')
-#     # print(f'app.rectLeft2 - 150 = {app.rectLeft2 - 150}')
-#     # print(f'app.rectLeft1 - 30 = {app.rectLeft1 - 30}')
-#     # print(f'app.rectLeft2 + 150 = {app.rectLeft2 + 150}')
-#     if abs(app.rectTop1 - app.rectTop2) <= 180 and ((app.rectLeft2 - 150 <= app.rectLeft1 + 30 <= app.rectLeft2 + 150) or (app.rectLeft2 - 150 <= app.rectLeft1 - 30 <= app.rectLeft2 + 150)):
-#         return 'grouned'
-
-
 def testCollision(app, x1, y1, x2, y2, width1, height1, width2, height2):
     newX1 = x1 - width1//2
     newY1 = y1 - height1//2

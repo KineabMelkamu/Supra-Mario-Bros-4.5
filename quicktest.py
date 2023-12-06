@@ -4,11 +4,16 @@ import os, pathlib
 
 #See: https://pillow.readthedocs.io/en/stable/reference/Image.html 
 
+def openImage(fileName):
+    return Image.open(os.path.join(pathlib.Path(__file__).parent,fileName))
+
 def onAppStart(app):
     app.margin = 5
 
     # Open image from local directory
-    app.image = Image.open('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Enemies\\rexframesnothit.png')
+    app.image = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\checkPointFlags\marioCheckPoint.png')
+    imageWidth, imageHeight = app.image.size
+    app.image = app.image.resize((imageWidth//6, imageHeight//6))
     # If the above line displays the error
     # FileNotFoundError: [Errno 2] No such file or directory: 'images/Caaaaat.jpg'
     # it is because PIL is looking for the file
@@ -22,8 +27,7 @@ def onAppStart(app):
     # If this is the solution that works on your operating system,
     # I recommend defining a custom function to open images as such:
     
-    # def openImage(fileName):
-    #     return Image.open(os.path.join(pathlib.Path(__file__).parent,fileName))
+
     
     # app.image = openImage("images/Caaaaat.jpg")
     
@@ -32,7 +36,7 @@ def onAppStart(app):
     # Access attributes like width and height
     app.imageWidth,app.imageHeight = app.image.width,app.image.height
     print(f'width: {app.imageWidth}, height: {app.imageHeight}')
-    app.image = app.image.crop((0, 100, 350, 500))
+    # app.image = app.image.crop((0, 0, 350, 500))
 
     # Use 'transpose' to flip images
     # app.imageFlipped = app.image.transpose(Image.FLIP_LEFT_RIGHT)
