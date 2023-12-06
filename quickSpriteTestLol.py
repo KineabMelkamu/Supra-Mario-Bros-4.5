@@ -18,7 +18,7 @@ class Mario:
         #All Sprites Accessed from https://www.mariouniverse.com/sprites-snes-smw/
         #All Music Downloaded from https://www.zophar.net/music/nintendo-snes-spc/super-mario-world
         #All Sound Effects Downloaded from: https://www.sounds-resource.com/snes/supermarioworld/sound/19236/
-
+        self.showHitBox = True
         self.leftConds = ['walkingLeftBig', 'idleBigLeft', 'crouchingLeftBig', 'jumpingLeftBigFrame1', 
                           'jumpingLeftBigFrame2', 'idleSmallLeft', 'walkingLeftSmall', 'crouchingLeftSmall',
                             'jumpingLeftSmallFrame1', 'jumpingLeftSmallFrame2', 'walkingLeftFire', 'idleLeftFire', 'crouchingLeftFire', 'jumpingLeftFireFrame1', 'jumpingLeftFireFrame2']
@@ -476,10 +476,6 @@ class Mario:
         if self.marioSize == 'fire' and key == 'x':
             self.threwFireBall = True
         
-        if key == 'p':
-            if self.checkpointx != None and self.checkpointy != None:
-                self.marioSize = 'small'
-                self.mariox, self.marioy = self.checkpointx, self.checkpointy - 200
 
     def marioHit(self):
         if self.marioSize == 'small':
@@ -620,7 +616,6 @@ class Mario:
             elif 'w' in keys:
                 self.marioy -= 1
 
-
     def marioKeyRelease(self, key, modifier):
         if self.marioSize == 'big':
             if (key == 'right'):
@@ -690,155 +685,159 @@ class Mario:
 
     def drawMario(self):
         if not Mario.isMarioDead:
+            if self.showHitBox:
+                color = 'red'
+            else:
+                color = None
             if self.marioSize == 'big':
                 if self.marioState == 'walkingRightBig':
                     spriteWalkingRight = self.spritesWalkingRightBig[self.spriteCounter]
                     drawImage(spriteWalkingRight, self.mariox+6, self.marioy+ 113, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'walkingLeftBig':
                     spriteWalkingLeft = self.spritesWalkingLeftBig[self.spriteCounter]
                     drawImage(spriteWalkingLeft, self.mariox + 18, self.marioy+ 113, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'idle':
                     drawImage(self.bigMarioIdleRight, self.mariox + 15, self.marioy+ 113, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'idleBigLeft':
                     drawImage(self.bigMarioIdleLeft, self.mariox + 14, self.marioy + 113, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'crouchingRightBig':
                     drawImage(self.bigMarioCrouchRight, self.mariox, self.marioy+ 133, align = 'center')
-                    drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = 'black', align = 'center')
+                    drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'crouchingLeftBig':
                     drawImage(self.bigMarioCrouchLeft, self.mariox, self.marioy+ 133, align = 'center')
-                    drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = 'black', align = 'center')
+                    drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingRightBigFrame1':
                     drawImage(self.bigMarioJumpRight1, self.mariox + 10, self.marioy+ 105, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingRightBigFrame2':
                     drawImage(self.bigMarioJumpRight2, self.mariox + 10, self.marioy+ 105, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingLeftBigFrame1':
                     drawImage(self.bigMarioJumpLeft1, self.mariox + 10, self.marioy+ 105, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingLeftBigFrame2':
                     drawImage(self.bigMarioJumpRight2, self.mariox + 10, self.marioy+ 105, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
 
             elif self.marioSize == 'small':
                 if self.marioState == 'idleSmallLeft':
                     drawImage(self.smallMarioIdleLeft, self.mariox + 15, self.marioy+ 125, align = 'center')
-                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'idleSmallRight':
                     drawImage(self.smallMarioIdleRight, self.mariox + 15, self.marioy + 125, align = 'center')
-                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'walkingRightSmall':
                     spriteWalkingRightSmall = self.spritesWalkingRightSmall[self.spriteCounter]
                     drawImage(spriteWalkingRightSmall, self.mariox + 7, self.marioy+ 125, align = 'center')
-                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'walkingLeftSmall':
                     spriteWalkingLeftSmall = self.spritesWalkingLeftSmall[self.spriteCounter]
                     drawImage(spriteWalkingLeftSmall, self.mariox+16, self.marioy+ 125, align = 'center')
-                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'crouchingRightSmall':
                     drawImage(self.smallMarioCrouchRight, self.mariox+14, self.marioy+ 130, align = 'center')
-                    drawRect(self.mainHitCrouchx, self.mainHitCrouchy, self.mainHitCrouchWidth, self.mainHitCrouchHeight, fill = None, border = 'black', align = 'center')
+                    drawRect(self.mainHitCrouchx, self.mainHitCrouchy, self.mainHitCrouchWidth, self.mainHitCrouchHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'crouchingLeftSmall':
                     drawImage(self.smallMarioCrouchLeft, self.mariox+5, self.marioy+ 130, align = 'center')
-                    drawRect(self.mainHitCrouchx, self.mainHitCrouchy, self.mainHitCrouchWidth, self.mainHitCrouchHeight, fill = None, border = 'black', align = 'center')
+                    drawRect(self.mainHitCrouchx, self.mainHitCrouchy, self.mainHitCrouchWidth, self.mainHitCrouchHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingLeftSmallFrame1':
                     drawImage(self.smallMarioJumpLeft1, self.mariox+15, self.marioy+ 120, align = 'center')
-                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingLeftSmallFrame2':
                     drawImage(self.smallMarioJumpLeft2, self.mariox+15, self.marioy+ 120, align = 'center')
-                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingRightSmallFrame1':
                     drawImage(self.smallMarioJumpRight1, self.mariox+15, self.marioy+ 120, align = 'center')
-                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingRightSmallFrame2':
                     drawImage(self.smallMarioJumpRight2, self.mariox+15, self.marioy+ 120, align = 'center')
-                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitx, self.mainHity, self.mainHitWidth, self.mainHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitx, self.topHity, self.topHitWidth, self.topHitHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitx, self.bottomHity, self.bottomHitWidth, self.bottomHitHeight, fill = None, border = color, align = 'center')
 
             elif self.marioSize == 'fire':
                 if self.marioState == 'walkingRightFire':
                     spriteWalkingRightFire = self.spritesWalkingRightFire[self.spriteCounter]
                     drawImage(spriteWalkingRightFire, self.mariox+20, self.marioy+ 113, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'walkingLeftFire':
                     spriteWalkingLeftFire = self.spritesWalkingLeftFire[self.spriteCounter]
                     drawImage(spriteWalkingLeftFire, self.mariox + 18, self.marioy+ 107, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'idleRightFire':
                     drawImage(self.fireMarioIdleRight, self.mariox + 15, self.marioy+ 113, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'idleLeftFire':
                     drawImage(self.fireMarioIdleLeft, self.mariox + 14, self.marioy + 113, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'crouchingRightFire':
                     drawImage(self.fireMarioCrouchRight, self.mariox, self.marioy+ 133, align = 'center')
-                    drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = 'black', align = 'center')
+                    drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'crouchingLeftFire':
                     drawImage(self.fireMarioCrouchLeft, self.mariox, self.marioy+ 133, align = 'center')
-                    drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = 'black', align = 'center')
+                    drawRect(self.mainHitBigCrouchx, self.mainHitBigCrouchy, self.mainHitBigCrouchWidth, self.mainHitBigCrouchHeight, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingRightFireFrame1':
                     drawImage(self.fireMarioJumpRight1, self.mariox + 10, self.marioy+ 105, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingRightFireFrame2':
                     drawImage(self.fireMarioJumpRight2, self.mariox + 10, self.marioy+ 105, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingLeftFireFrame1':
                     drawImage(self.fireMarioJumpLeft1, self.mariox + 10, self.marioy+ 105, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
                 elif self.marioState == 'jumpingLeftFireFrame2':
                     drawImage(self.fireMarioJumpLeft2, self.mariox + 10, self.marioy+ 105, align = 'center')
-                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = 'black', align = 'center')
-                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = 'red', align = 'center')
-                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = 'red', align = 'center')
+                    drawRect(self.mainHitBigx, self.mainHitBigy, self.mainHitBigWidth, self.mainHitBigHeight, fill = None, border = color, align = 'center')
+                    drawRect(self.topHitBigx, self.topHitBigy, self.topHitWidthBig, self.topHitHeightBig, fill = None, border = color, align = 'center')
+                    drawRect(self.bottomHitBigx, self.bottomHitBigy, self.bottomHitWidthBig, self.bottomHitHeightBig, fill = None, border = color, align = 'center')
         elif Mario.isMarioDead:
             spriteDeath = self.spriteSmallMarioDeath[self.spriteCounter]
             drawImage(spriteDeath, self.mariox, self.marioy + 100, align = 'center')
@@ -848,6 +847,7 @@ class PowerUps(Mario):
         self.x, self.y, self.powerUp = x, y, powerUp
 
         self.isPowerUpHit = False
+        self.showHitBoxx = True
 
         #powerUpAssets
         self.oneUpMushroom = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\\1upMushroom.png')
@@ -914,26 +914,30 @@ class PowerUps(Mario):
 
 
     def drawPowerUp(self):
+        if self.showHitBoxx:
+            color = 'blue'
+        else:
+            color = None
         if not self.isPowerUpHit: 
             if self.powerUp == 'fireFlower':
                 spriteFrameFire = self.spritesFireFlower[self.spriteCounter]
                 drawImage(spriteFrameFire, self.x, self.y, align = 'center')
                 #self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight = self.x, self.y, 14, 14
-                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = 'blue', align = 'center')
+                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = color, align = 'center')
             elif self.powerUp == 'mysteryBlock':
                 spriteFrameMystery = self.spritesMysteryBlock[self.othaCounter]
                 drawImage(spriteFrameMystery, self.x, self.y, align = 'center')
-                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = 'blue', align = 'center')
+                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = color, align = 'center')
             elif self.powerUp == 'coin':
                 spriteCoin = self.spritesCoin[self.othaCounter]
                 drawImage(spriteCoin, self.x, self.y, align = 'center')
-                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = 'blue', align = 'center')
+                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = color, align = 'center')
             elif self.powerUp == 'superMushroom':
                 drawImage(self.superMushroom, self.x, self.y, align = 'center')
-                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = 'blue', align = 'center')
+                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = color, align = 'center')
             elif self.powerUp == 'oneUpMushroom':
                 drawImage(self.oneUpMushroom, self.x, self.y, align = 'center')
-                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = 'blue', align = 'center')
+                drawRect(self.fireFlowerBoxX, self.fireFlowerBoxY, self.fireFlowerBoxWidth, self.fireFlowerBoxHeight, fill = None, border = color, align = 'center')
 
 class enemies(Mario):
     def __init__(self, x, y, enemyState, enemyType):
@@ -953,6 +957,8 @@ class enemies(Mario):
         self.bottom = self.y + 200
         tempVal = self.y
         self.top = tempVal
+
+        self.showHitBoxx = True
 
 
         self.gloombaWalkLeft = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Enemies\gloombaFrameMap.png')
@@ -1012,7 +1018,6 @@ class enemies(Mario):
         self.stepCounter = 0
     
     def stepEnemy(self):
-        print(self.top, self.bottom)
         if self.enemyType == 'gloomba':
             self.x -= 2
             self.goombaXBox, self.goombaYBox = self.x, self.y
@@ -1054,43 +1059,52 @@ class enemies(Mario):
 
     
     def drawEnemy(self):
+        if self.showHitBoxx:
+            color = 'red'
+        else:
+            color = None
         if self.enemyType == 'gloomba':
             if not self.isKilled:
                 spriteWalkingLeftGloomba = self.spritesGloombaWalking[self.spriteCounter]
                 drawImage(spriteWalkingLeftGloomba, self.x, self.y, align = 'center')
-                drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = 'red', align = 'center')
+                drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = color, align = 'center')
         elif self.enemyType == 'bulletBill':
             drawImage(self.bulletBill, self.x, self.y, align = 'center')
-            drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = 'red', align = 'center')
+            drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = color, align = 'center')
         elif self.enemyType == 'rex':
             if not self.isKilled:
                 if self.enemyState == 'rexNoHit':
                     spriteNoHitRex = self.rexWalkingNoHit[self.spriteCounter]
                     drawImage(spriteNoHitRex, self.x, self.y - 5, align = 'center')
-                    drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = 'red', align = 'center')
-                    drawRect(self.fireRectx, self.fireRecty, self.fireRectWidth, self.fireRectxHeight, fill = None, border = 'blue', align = 'center')
+                    drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = color, align = 'center')
+                    drawRect(self.fireRectx, self.fireRecty, self.fireRectWidth, self.fireRectxHeight, fill = None, border = color, align = 'center')
         elif self.enemyType == 'thwomp':
             if self.enemyState == 'thwompFall':
                 drawImage(self.thwompFall, self.x, self.y - 5, align = 'center')
-                drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = 'red', align = 'center')
-                drawRect(self.fallBoxx, self.fallBoxy, self.fallBoxwidth, self.fallBoxheight, fill = None, border = 'blue', align = 'center')
+                drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = color, align = 'center')
+                drawRect(self.fallBoxx, self.fallBoxy, self.fallBoxwidth, self.fallBoxheight, fill = None, border = color, align = 'center')
             elif self.enemyState == 'thwompRest':
                 drawImage(self.thwompRest, self.x , self.y, align = 'center')
-                drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = 'red', align = 'center')
-                drawRect(self.fallBoxx, self.fallBoxy, self.fallBoxwidth, self.fallBoxheight, fill = None, border = 'blue', align = 'center')
+                drawRect(self.goombaXBox, self.goombaYBox, self.goombaWidthBox, self.goombaHeightBox, fill = None, border = color, align = 'center')
+                drawRect(self.fallBoxx, self.fallBoxy, self.fallBoxwidth, self.fallBoxheight, fill = None, border = color, align = 'center')
 
 class structures:
     def __init__(self, x, y, width, height, structureType):
         self.x, self.y, self.width, self.height, self.structureType = x, y, width, height, structureType
+        self.showHitBoxx = True
     def draw(self):
-        drawRect(self.x, self.y, self.width, self.height, fill = None, border = 'pink', align = 'center')
+        if self.showHitBoxx:
+            color = 'pink'
+        else:
+            color = None
+        drawRect(self.x, self.y, self.width, self.height, fill = None, border = color, align = 'center')
 
 class projectiles: 
     def __init__(self, x, y, projectileType, direction, isFreindly, othay):
         self.x, self.y, self.projectileType, self.direction, self.isFreindly, self.othay = x + 40, y, projectileType, direction, isFreindly, othay
         self.exists = True
         self.randomNumber = random.randint(1,2)
-        print(self.randomNumber)
+        self.showHitBoxx = True        
 
         self.fireBall = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Items\\fireball.png")
 
@@ -1130,10 +1144,14 @@ class projectiles:
             self.exists = not self.exists
 
     def drawProjectile(self):
+        if self.showHitBoxx:
+            color = 'blue'
+        else:
+            color = None
         if self.exists:
             if self.projectileType == 'fireball':
                 drawImage(self.fireBall, self.x, self.y, align = 'center')
-                drawRect(self.fireBallBoxX, self.fireBallBoxY, self.fireBallBoxWidth, self.fireBallBoxHeight, fill = None, border = 'blue', align = 'center')
+                drawRect(self.fireBallBoxX, self.fireBallBoxY, self.fireBallBoxWidth, self.fireBallBoxHeight, fill = None, border = color, align = 'center')
 
 class checkpoint(Mario):
     def __init__(self, x, y):
@@ -1142,6 +1160,7 @@ class checkpoint(Mario):
         self.xBox, self.yBox, self.width, self.height = self.x, self.y, 30, 30
         self.marioxbox, self.marioybox, self.mariowidthbox, self.marioheightbox = None, None, None, None
         self.isHit = False
+        self.showHitBoxx = True
 
         self.bowserFlag = openImage('C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\checkPointFlags\\bowsaCheckPoint.png')
         bowserFlagWidth, bowserFlagHeight = self.bowserFlag.size
@@ -1160,12 +1179,16 @@ class checkpoint(Mario):
             self.isHit = True
 
     def draw(self):
+        if self.showHitBoxx:
+            color = 'yellow'
+        else:
+            color = None
         if self.isHit:
             drawImage(self.marioFlag, self.x, self.y, align = 'center')
-            drawRect(self.xBox, self.yBox, self.width, self.height, fill = None, border = 'yellow', align = 'center')
+            drawRect(self.xBox, self.yBox, self.width, self.height, fill = None, border = color, align = 'center')
         elif not self.isHit:
             drawImage(self.bowserFlag, self.x, self.y, align = 'center')
-            drawRect(self.xBox, self.yBox, self.width, self.height, fill = None, border = 'yellow', align = 'center')
+            drawRect(self.xBox, self.yBox, self.width, self.height, fill = None, border = color, align = 'center')
 
 
 
@@ -1206,8 +1229,14 @@ def onAppStart(app):
     app.map1 = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\Yoshi's Island.png")
     app.map1 = CMUImage(app.map1)
 
+    app.map2 = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\finStage.png")
+    app.map2 = CMUImage(app.map2)
+
     app.backround1 = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\backrounds.png")
     app.backround1 = CMUImage(app.backround1)
+
+    app.backround2 = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\\backround2.png")
+    app.backround2 = CMUImage(app.backround2)
 
     #Accessed From https://www.fontspace.com/typeface-mario-world-pixel-font-f56447
     app.titleName = openImage("C:\CMU wrk\\15-112\Supra Mario Bros 4.5\imgs\SuperMarioWorldTitle.png")
@@ -1225,6 +1254,10 @@ def onAppStart(app):
     app.line1x = -100
     app.line2x = 900
 
+    app.map2x, app.map2y = 2500, 100
+
+    
+
     #Map and current State
     app.isTitleScreen = True
     app.isLevel1 = False
@@ -1233,12 +1266,27 @@ def onAppStart(app):
     app.isNextLevelScreen = False
     app.livesScreen = False
     app.isEndScreen = False
+    app.showHitBoxes = True
 
     #structures:
     app.grounds = []
-    app.wall1 = structures(855, 455, 510, 200, 'wall')
-    app.grounds.append(app.wall1)
-    app.ground1 = structures(765, 480, 6000, 90, 'ground')
+    app.wall2 = structures(3830, 520, 150, 200, 'wall')
+    app.grounds.append(app.wall2)
+    app.wall3 = structures(3970, 490, 130, 200, 'wall')
+    app.grounds.append(app.wall3)
+    app.wall4 = structures(4080, 460, 100, 200, 'wall')
+    app.grounds.append(app.wall4)
+    app.wall5 = structures(4350, 430, 455, 200, 'wall')
+    app.grounds.append(app.wall5)
+    app.wall6 = structures(7135, 500, 295, 200, 'wall')
+    app.grounds.append(app.wall6)
+    app.wall7 = structures(8750, 565, 2800, 200, 'wall')
+    app.grounds.append(app.wall7)
+
+
+
+
+    app.ground1 = structures(765, 490, 6000, 90, 'ground')
     app.grounds.append(app.ground1)
     app.ground2 = structures(855, 340, 510, 10, 'ground')
     app.grounds.append(app.ground2)
@@ -1264,7 +1312,7 @@ def onAppStart(app):
     app.grounds.append(app.ground12)
     app.ground13 = structures(7135, 380, 295, 10, 'ground')
     app.grounds.append(app.ground13)
-    app.ground14 = structures(8750, 445, 2800, 10, 'ground')
+    app.ground14 = structures(8350, 445, 2800, 10, 'ground')
     app.grounds.append(app.ground14)
     app.end1 = structures(9800, 445, 300, 60000, 'endCon')
     app.grounds.append(app.end1)
@@ -1281,17 +1329,62 @@ def onAppStart(app):
     app.fireFlower1 = PowerUps(550, 400, 'superMushroom')
     app.fireFlower2 = PowerUps(590, 400, 'fireFlower')
     app.powerUps.append(app.fireFlower1)
-    # app.powerUps.append(app.fireFlower2)
+    app.powerUps.append(app.fireFlower2)
 
     #enemies
     app.enemies = []
-    app.gloomba1 = enemies(500, 200, 'thwompRest', 'thwomp')
+    app.gloomba1 = enemies(500, 425, 'thwompRest', 'gloomba')
     app.enemies.append(app.gloomba1)
+    app.rex1 = enemies(1520, 425, 'rexNoHit', 'rex')
+    app.enemies.append(app.rex1)
+    app.gloomba2 = enemies(7435, 425, 'thwompRest', 'gloomba')
+    app.enemies.append(app.gloomba2)
+    app.gloomba3 = enemies(7785, 425, 'thwompRest', 'gloomba')
+    app.enemies.append(app.gloomba3)
+    app.rex2 = enemies(7585, 425, 'rexNoHit', 'rex')
+    app.enemies.append(app.rex2)
+    app.thwomp1 = enemies(9600, 200, 'thwompRest', 'thwomp')
+    app.enemies.append(app.thwomp1)
+    app.bulletBill1 = enemies(12000, 290, 'thwompRest', 'bulletBill')
+    app.enemies.append(app.bulletBill1)
+
+    app.enemies2 = []
+    for i in range(50):
+        app.enemies2.append(enemies(500 + i*80, 200, 'thwompRest', 'thwomp'))
+    app.bulletBill2 = enemies(12000, 290, 'thwompRest', 'bulletBill')
+    app.enemies2.append(app.bulletBill2)
+
+    app.grounds2 = []
+    app.groundV2 = structures(765, 490, 120000, 90, 'ground')
+    app.grounds2.append(app.groundV2)
+    app.finEndCon = structures(5000, 490, 100, 60000, 'endCon')
+    app.grounds2.append(app.finEndCon)
+
 
     app.projectiles = []
+    app.projectiles2 = []
+
+    app.checkpoints2 = []
 
 def onStep(app):
     app.stepCounter += 1
+    app.Mario.showHitBox = app.showHitBoxes
+    for powerup in app.powerUps:
+        powerup.showHitBoxx = app.showHitBoxes
+    for enemy in app.enemies:
+        enemy.showHitBoxx = app.showHitBoxes
+    for ground in app.grounds:
+        ground.showHitBoxx = app.showHitBoxes
+    for projectile in app.projectiles:
+        projectile.showHitBoxx = app.showHitBoxes
+    for checkpoint in app.checkpoints:
+        checkpoint.showHitBoxx = app.showHitBoxes
+    for enemy in app.enemies2:
+        enemy.showHitBoxx = app.showHitBoxes
+    for ground in app.grounds2:
+        ground.showHitBoxx = app.showHitBoxes
+    for projectile in app.projectiles2:
+        projectile.showHitBoxx = app.showHitBoxes
     if app.isLevel1 == True:
         if app.Mario.isMarioDead:
             if app.Mario.checkpointx != None:
@@ -1299,21 +1392,6 @@ def onStep(app):
                 app.Mario.numLives = 400
                 methVal = app.Mario.mariox - app.Mario.checkpointx
                 # app.Mario.mariox += methVal
-                app.line1x += methVal
-                app.line2x += methVal
-                app.map1x += methVal
-                for ground in app.grounds:
-                    ground.x += methVal
-                for enemy in app.enemies:
-                    enemy.x += methVal
-                for checkpoint in app.checkpoints:
-                    checkpoint.x += methVal
-                for projectile in app.projectiles:
-                    projectile.x += methVal
-            else:
-                app.Mario.marioSize = 'small'
-                app.Mario.numLives = 400
-                methVal = app.Mario.mariox - app.restartPoint1
                 app.line1x += methVal
                 app.line2x += methVal
                 app.map1x += methVal
@@ -1336,7 +1414,8 @@ def onStep(app):
                   
         for powerup in app.powerUps:
             if powerup.powerUp == 'superMushroom' and testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, powerup.fireFlowerBoxX, powerup.fireFlowerBoxY, app.Mario.mainHitWidth, app.Mario.mainHitHeight, powerup.fireFlowerBoxWidth, powerup.fireFlowerBoxHeight) == True:
-                if app.Mario.marioSize != 'fire':
+                app.Mario.numLives += 30
+                if app.Mario.marioSize == 'big' or app.Mario.marioSize == 'small':
                     app.Mario.marioSize = 'big'
                     powerup.isPowerUpHit = True
                 else:
@@ -1402,6 +1481,11 @@ def onStep(app):
                 elif testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height) and structure.structureType == 'endCon':
                     app.isLevel1 = False
                     app.isNextLevelScreen = True
+                    app.grounds.clear()
+                    app.checkpoints.clear()
+                    app.powerUps.clear()
+                    app.enemies.clear()
+                    app.projectiles.clear()
             if app.Mario.marioSize == 'big' or app.Mario.marioSize == 'fire':
                 if testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, structure.x, structure.y, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, structure.width, structure.height) and structure.structureType == 'wall':
                     app.Mario.wallx, app.Mario.wally, app.Mario.wallWidth, app.Mario.wallHeight = structure.x, structure.y, structure.width, structure.height
@@ -1410,7 +1494,11 @@ def onStep(app):
                 elif testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, structure.x, structure.y, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, structure.width, structure.height) and structure.structureType == 'endCon':
                     app.isNextLevelScreen = True
                     app.isLevel1 = False
-                    
+                    app.grounds.clear()
+                    app.checkpoints.clear()
+                    app.powerUps.clear()
+                    app.enemies.clear()
+                    app.projectiles.clear()
 
         for projectile in app.projectiles:
             projectile.step()
@@ -1418,17 +1506,17 @@ def onStep(app):
                 if app.Mario.marioSize == 'big' or app.Mario.marioSize == 'fire':
                     if app.Mario.marioState == 'crouchingRightBig' or app.Mario.marioState == 'crouchingLeftBig' or app.Mario.marioState == 'crouchingRightFire' or app.Mario.marioState == 'crouchingLeftFire':
                         if testCollision(app, app.Mario.mainHitBigCrouchx, app.Mario.mainHitBigCrouchy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitBigCrouchWidth, app.Mario.mainHitBigCrouchHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
-                            app.Mario.numLives -= 20
+                            app.Mario.numLives -= 60
                     else:
                         if testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
-                            app.Mario.numLives -= 20          
+                            app.Mario.numLives -= 60          
                 else:
                     if app.Mario.marioState == 'crouchingRightSmall' or app.Mario.marioState == 'crouchingLeftSmall':
                         if testCollision(app, app.Mario.mainHitCrouchx, app.Mario.mainHitCrouchy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitCrouchWidth, app.Mario.mainHitCrouchHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
-                            app.Mario.numLives -= 20
+                            app.Mario.numLives -= 60
                     else:
                         if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitWidth, app.Mario.mainHitHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
-                            app.Mario.numLives -= 20
+                            app.Mario.numLives -= 60
             else:
                 for enemy in app.enemies:
                     if testCollision(app, enemy.goombaXBox, enemy.goombaYBox, projectile.fireBallBoxX, projectile.fireBallBoxY, enemy.goombaWidthBox, enemy.goombaHeightBox, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight) and enemy.enemyType != 'thwomp' and enemy.enemyType != 'bulletBill':
@@ -1457,6 +1545,11 @@ def onStep(app):
                     powerup.x -= 5
                 for checkpoint in app.checkpoints:
                     checkpoint.x -=5
+                for projectile in app.projectiles:
+                    if projectile.direction == 'left':
+                        projectile.x -= 5
+                    elif projectile.direction == 'right':
+                        projectile.x += 5
             elif app.Mario.isMovingRight == True and app.Mario.isRunning == True:
                 app.line1x -= 10
                 app.line2x -= 10
@@ -1472,7 +1565,164 @@ def onStep(app):
                     powerup.x -= 10
                 for checkpoint in app.checkpoints:
                     checkpoint.x -=10
+                for projectile in app.projectiles:
+                    if projectile.direction == 'left':
+                        projectile.x -= 10
+                    elif projectile.direction == 'right':
+                        projectile.x += 10
 
+    elif app.isLevel2 == True:
+        if app.Mario.isMarioDead:
+            if app.Mario.checkpointx != None:
+                app.Mario.marioSize = 'small'
+                app.Mario.numLives = 400
+                methVal = app.Mario.mariox - app.Mario.checkpointx
+                # app.Mario.mariox += methVal
+                app.line1x += methVal
+                app.line2x += methVal
+                app.map2x += methVal
+                for ground in app.grounds2:
+                    ground.x += methVal
+                for enemy in app.enemies2:
+                    enemy.x += methVal
+                for checkpoint in app.checkpoints2:
+                    checkpoint.x += methVal
+                for projectile in app.projectiles2:
+                    projectile.x += methVal
+
+        if app.Mario.threwFireBall:
+            if app.stepCounter%9 == 0:
+                if app.Mario.marioState in app.Mario.rightConds:
+                    app.projectiles2.append(projectiles(app.Mario.mariox, app.Mario.marioy, 'fireball', 'right', True, app.Mario.marioy))
+                if app.Mario.marioState in app.Mario.leftConds:
+                    app.projectiles2.append(projectiles(app.Mario.mariox, app.Mario.marioy, 'fireball', 'left', True, app.Mario.marioy))
+        
+                  
+
+        for enemy in app.enemies2:
+            if enemy.isThrowingFire:
+                if app.stepCounter%90 == 0:
+                    app.projectiles.append(projectiles(enemy.x, enemy.y, 'fireball', 'left', False, enemy.y - 100))
+            if app.Mario.marioSize == 'small':
+                if app.Mario.marioState != 'crouchingRightSmall' and app.Mario.marioState != 'crouchingLeftSmall':
+                    enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitx, app.Mario.mainHity, app.Mario.mainHitWidth, app.Mario.mainHitHeight
+                else:
+                    enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitCrouchx, app.Mario.mainHitCrouchy, app.Mario.mainHitCrouchWidth, app.Mario.mainHitCrouchHeight
+            else:
+                if app.Mario.marioState != 'crouchingRightFire' and app.Mario.marioState != 'crouchingLeftFire' and app.Mario.marioState != 'crouchingRightBig'and app.Mario.marioState != 'crouchingLeftBig':
+                    enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitBigx, app.Mario.mainHitBigy, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight
+                else:
+                    enemy.marioxbox, enemy.marioybox, enemy.mariowidthbox, enemy.marioheightbox = app.Mario.mainHitBigCrouchx, app.Mario.mainHitBigCrouchy, app.Mario.mainHitBigCrouchWidth, app.Mario.mainHitBigCrouchHeight
+            if app.Mario.marioSize == 'small':
+                if testCollision(app, app.Mario.bottomHitx, app.Mario.bottomHity, enemy.goombaXBox, enemy.goombaYBox, app.Mario.bottomHitWidth, app.Mario.bottomHitHeight, enemy.goombaWidthBox, enemy.goombaHeightBox) and enemy.enemyType != 'bulletBill' and enemy.enemyType != 'thwomp':
+                    app.Mario.marioy -= 40
+                    app.enemies.remove(enemy)
+                elif testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, enemy.goombaXBox, enemy.goombaYBox, app.Mario.mainHitWidth, app.Mario.mainHitHeight, enemy.goombaWidthBox, enemy.goombaHeightBox):
+                    app.Mario.numLives -= 10
+            else:
+                if testCollision(app, app.Mario.bottomHitBigx, app.Mario.bottomHitBigy, enemy.goombaXBox, enemy.goombaYBox, app.Mario.bottomHitWidthBig, app.Mario.bottomHitHeightBig, enemy.goombaWidthBox, enemy.goombaHeightBox) and enemy.enemyType != 'bulletBill' and enemy.enemyType != 'thwomp':
+                    app.Mario.marioy -= 40
+                    app.enemies.remove(enemy)
+                elif testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, enemy.goombaXBox, enemy.goombaYBox, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, enemy.goombaWidthBox, enemy.goombaHeightBox):
+                    app.Mario.numLives -= 10
+        for checkpoint in app.checkpoints2:
+            if app.Mario.marioSize == 'small':
+                if app.Mario.marioState != 'crouchingRightSmall' and app.Mario.marioState != 'crouchingLeftSmall':
+                    checkpoint.marioxbox, checkpoint.marioybox, checkpoint.mariowidthbox, checkpoint.marioheightbox = app.Mario.mainHitx, app.Mario.mainHity, app.Mario.mainHitWidth, app.Mario.mainHitHeight
+                else:
+                    checkpoint.marioxbox, checkpoint.marioybox, checkpoint.mariowidthbox, checkpoint.marioheightbox = app.Mario.mainHitCrouchx, app.Mario.mainHitCrouchy, app.Mario.mainHitCrouchWidth, app.Mario.mainHitCrouchHeight
+            else:
+                if app.Mario.marioState != 'crouchingRightFire' and app.Mario.marioState != 'crouchingLeftFire' and app.Mario.marioState != 'crouchingRightBig'and app.Mario.marioState != 'crouchingLeftBig':
+                    checkpoint.marioxbox, checkpoint.marioybox, checkpoint.mariowidthbox, checkpoint.marioheightbox = app.Mario.mainHitBigx, app.Mario.mainHitBigy, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight
+                else:
+                    checkpoint.marioxbox, checkpoint.marioybox, checkpoint.mariowidthbox, checkpoint.marioheightbox = app.Mario.mainHitBigCrouchx, app.Mario.mainHitBigCrouchy, app.Mario.mainHitBigCrouchWidth, app.Mario.mainHitBigCrouchHeight
+            checkpoint.onStep()
+            if checkpoint.isHit == True:
+                app.Mario.checkpointx, app.Mario.checkpointy = checkpoint.checkx, checkpoint.checky
+        for structure in app.grounds2:
+            if app.Mario.marioSize == 'small':
+                if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height) and structure.structureType == 'wall':
+                    app.Mario.wallx, app.Mario.wally, app.Mario.wallWidth, app.Mario.wallHeight = structure.x, structure.y, structure.width, structure.height
+                if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height) and structure.structureType == 'ground':
+                    app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight, app.Mario.groundType = structure.x, structure.y, structure.width, structure.height, structure.structureType
+                elif testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, structure.x, structure.y, app.Mario.mainHitWidth, app.Mario.mainHitHeight, structure.width, structure.height) and structure.structureType == 'endCon':
+                    app.isLevel2 = False
+                    app.isEndScreen = True
+            if app.Mario.marioSize == 'big' or app.Mario.marioSize == 'fire':
+                if testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, structure.x, structure.y, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, structure.width, structure.height) and structure.structureType == 'wall':
+                    app.Mario.wallx, app.Mario.wally, app.Mario.wallWidth, app.Mario.wallHeight = structure.x, structure.y, structure.width, structure.height
+                if testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, structure.x, structure.y, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, structure.width, structure.height) and structure.structureType == 'ground':
+                    app.Mario.groundx, app.Mario.groundy, app.Mario.groundWidth, app.Mario.groundHeight, app.Mario.groundType = structure.x, structure.y, structure.width, structure.height, structure.structureType
+                elif testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, structure.x, structure.y, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, structure.width, structure.height) and structure.structureType == 'endCon':
+                    app.isLevel2 = False
+                    app.isEndScreen = True
+
+        for projectile in app.projectiles2:
+            projectile.step()
+            if projectile.isFreindly == False:
+                if app.Mario.marioSize == 'big' or app.Mario.marioSize == 'fire':
+                    if app.Mario.marioState == 'crouchingRightBig' or app.Mario.marioState == 'crouchingLeftBig' or app.Mario.marioState == 'crouchingRightFire' or app.Mario.marioState == 'crouchingLeftFire':
+                        if testCollision(app, app.Mario.mainHitBigCrouchx, app.Mario.mainHitBigCrouchy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitBigCrouchWidth, app.Mario.mainHitBigCrouchHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
+                            app.Mario.numLives -= 60
+                    else:
+                        if testCollision(app, app.Mario.mainHitBigx, app.Mario.mainHitBigy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitBigWidth, app.Mario.mainHitBigHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
+                            app.Mario.numLives -= 60          
+                else:
+                    if app.Mario.marioState == 'crouchingRightSmall' or app.Mario.marioState == 'crouchingLeftSmall':
+                        if testCollision(app, app.Mario.mainHitCrouchx, app.Mario.mainHitCrouchy, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitCrouchWidth, app.Mario.mainHitCrouchHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
+                            app.Mario.numLives -= 60
+                    else:
+                        if testCollision(app, app.Mario.mainHitx, app.Mario.mainHity, projectile.fireBallBoxX, projectile.fireBallBoxY, app.Mario.mainHitWidth, app.Mario.mainHitHeight, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight):
+                            app.Mario.numLives -= 60
+            else:
+                for enemy in app.enemies:
+                    if testCollision(app, enemy.goombaXBox, enemy.goombaYBox, projectile.fireBallBoxX, projectile.fireBallBoxY, enemy.goombaWidthBox, enemy.goombaHeightBox, projectile.fireBallBoxWidth, projectile.fireBallBoxHeight) and enemy.enemyType != 'thwomp' and enemy.enemyType != 'bulletBill':
+                        app.enemies.remove(enemy)
+                        app.projectiles.remove(projectile)
+                
+        app.Mario.stepMario()
+        
+        for enemy in app.enemies2:
+            enemy.stepEnemy()
+        if app.Mario.mariox > app.width//2 and app.Mario.canWalkRight:
+            app.Mario.isScrollingRight = True
+            if app.Mario.isMovingRight == True and app.Mario.isRunning == False:
+                app.line1x -= 5
+                app.line2x -= 5
+                app.map2x -= 5
+                app.Mario.groundx -= 5
+                if app.Mario.wallx != None:
+                    app.Mario.wallx -= 5
+                for ground in app.grounds2:
+                    ground.x -=5
+                for enemy in app.enemies2:
+                    enemy.x -=5
+                for checkpoint in app.checkpoints2:
+                    checkpoint.x -=5
+                for projectile in app.projectiles2:
+                    if projectile.direction == 'left':
+                        projectile.x -= 5
+                    elif projectile.direction == 'right':
+                        projectile.x += 5
+            elif app.Mario.isMovingRight == True and app.Mario.isRunning == True:
+                app.line1x -= 10
+                app.line2x -= 10
+                app.map2x -= 10
+                app.Mario.groundx -= 10
+                if app.Mario.wallx != None:
+                    app.Mario.wallx -= 10
+                for ground in app.grounds2:
+                    ground.x -=10
+                for enemy in app.enemies2:
+                    enemy.x -=10
+                for checkpoint in app.checkpoints2:
+                    checkpoint.x -=10
+                for projectile in app.projectiles2:
+                    if projectile.direction == 'left':
+                        projectile.x -= 10
+                    elif projectile.direction == 'right':
+                        projectile.x += 10
+        
 
 def onKeyHold(app, keys, modifiers):
     app.Mario.marioKeyHold(keys, modifiers)
@@ -1481,6 +1731,8 @@ def onKeyRelease(app, key, modifier):
     app.Mario.marioKeyRelease(key, modifier)
 
 def onKeyPress(app, key):
+    if key == 'h':
+        app.showHitBoxes = not app.showHitBoxes
     if app.isTitleScreen == True:
         if key == 'z':
             app.isOnTitleScreen = False
@@ -1524,7 +1776,23 @@ def redrawAll(app):
         drawLabel("APPROCHING FINAL LEVEL, PRESS Z TO ENTER...", app.width//2, app.height//2, size = 16, fill = 'white')
         drawLabel("IF YOU DARE!!!", app.width//2, app.height//2 + 60, size = 25, fill = 'white')
     if app.isLevel2:
+        drawImage(app.backround2, app.backround1x, app.backround1y, align = 'center')
+        drawImage(app.map2, app.map2x, app.map2y, align = 'center')
+        drawLabel(f'LIVES: {app.Mario.numLives}', 50, 20, size = 16)
+        if app.Mario.isKpressible == True:
+            drawLabel('PRESS K TO RESTART', app.width//2, app.height//2, size = 30)
+        for ground in app.grounds2:
+            ground.draw()
+        for enemy in app.enemies2:
+            enemy.drawEnemy()
+        for projectile in app.projectiles2:
+            projectile.drawProjectile()
+        for checkpoint in app.checkpoints2:
+            checkpoint.draw()
+        app.Mario.drawMario()
+    if app.isEndScreen:
         drawRect(0,0, app.width, app.height, fill = 'pink')
+        drawImage(app.endWords, app.width//2, app.height//2, align = 'center')
  
 def main():
     runApp(width=700, height=500)
